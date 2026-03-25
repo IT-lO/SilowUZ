@@ -22,5 +22,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "SiłowUZ"
+rootProject.name = "SilowUZ"
 include(":app")

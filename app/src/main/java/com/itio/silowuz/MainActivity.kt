@@ -5,10 +5,8 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBox
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -20,75 +18,79 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.PreviewScreenSizes
-import com.itio.silowuz.ui.theme.SiłowUZTheme
-
+import androidx.compose.ui.res.painterResource
+import com.itio.silowuz.`interface`.IconResource
+import com.itio.silowuz.screen.ExerciseScreen
+import com.itio.silowuz.screen.HomeScreen
+import com.itio.silowuz.screen.LoginScreen
+import com.itio.silowuz.screen.ProfileScreen
+import com.itio.silowuz.ui.theme.SilowUZTheme
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            SiłowUZTheme {
-                SiłowUZApp()
+            SilowUZTheme {
+                MainRoot()
             }
         }
     }
 }
-
-@PreviewScreenSizes
 @Composable
-fun SiłowUZApp() {
+fun MainRoot(){
+    var isLoggedIn by rememberSaveable { mutableStateOf(false) }
+    if(!isLoggedIn){
+        LoginScreen(onLoginSuccess = {isLoggedIn = true} )
+    }
+    else{
+        SilowUZApp(onLogout = {isLoggedIn = false})
+    }
+}
+@Composable
+fun SilowUZApp( onLogout: () -> Unit) {
     var currentDestination by rememberSaveable { mutableStateOf(AppDestinations.HOME) }
 
     NavigationSuiteScaffold(
         navigationSuiteItems = {
-            AppDestinations.entries.forEach {
+            AppDestinations.entries.forEach { destination ->
                 item(
                     icon = {
-                        Icon(
-                            it.icon,
-                            contentDescription = it.label
-                        )
+                        when(val iconRes = destination.icon){
+                            is IconResource.Vector -> {
+                                Icon(
+                                    imageVector = iconRes.imageVector,
+                                    contentDescription = destination.label
+                                )
+                            }
+                            is IconResource.Drawable -> {
+                                Icon(
+                                    painter = painterResource(id = iconRes.resId),
+                                    contentDescription = destination.label
+                                )
+                            }
+                        }
                     },
-                    label = { Text(it.label) },
-                    selected = it == currentDestination,
-                    onClick = { currentDestination = it }
+                    label = { Text(destination.label) },
+                    selected = destination == currentDestination,
+                    onClick = { currentDestination = destination }
                 )
             }
         }
     ) {
         Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-            Greeting(
-                name = "Android",
-                modifier = Modifier.padding(innerPadding)
-            )
+            when(currentDestination){
+                AppDestinations.HOME -> HomeScreen(innerPadding)
+                AppDestinations.EXERCISE -> ExerciseScreen(innerPadding)
+                AppDestinations.PROFILE -> ProfileScreen(innerPadding, onLogout)
+            }
         }
     }
 }
-
 enum class AppDestinations(
     val label: String,
-    val icon: ImageVector,
+    val icon: IconResource,
 ) {
-    HOME("Home", Icons.Default.Home),
-    FAVORITES("Favorites", Icons.Default.Favorite),
-    PROFILE("Profile", Icons.Default.AccountBox),
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    SiłowUZTheme {
-        Greeting("Android")
-    }
+    HOME("Home", IconResource.Vector(Icons.Default.Home)),
+    EXERCISE("Exercise", IconResource.Drawable(R.drawable.exercise_ico)),
+    PROFILE("Profile", IconResource.Vector(Icons.Default.AccountBox)),
 }
