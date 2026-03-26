@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">SilowUZ</string>
+    <string name="series_info_reps">Reps: %1$d</string>
+    <string name="series_info_series">Series: %1$d</string>
+    <string name="series_info_weight">Weight: %1$f</string>
+    <string name="series_info_duration">Duration: %1$s</string>
 </resources>
