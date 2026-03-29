@@ -19,6 +19,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import com.itio.silowuz.`interface`.IconResource
 import com.itio.silowuz.screen.ExerciseScreen
 import com.itio.silowuz.screen.HomeScreen
@@ -59,18 +60,18 @@ fun SilowUZApp( onLogout: () -> Unit) {
                             is IconResource.Vector -> {
                                 Icon(
                                     imageVector = iconRes.imageVector,
-                                    contentDescription = destination.label
+                                    contentDescription = stringResource(destination.labelId)
                                 )
                             }
                             is IconResource.Drawable -> {
                                 Icon(
                                     painter = painterResource(id = iconRes.resId),
-                                    contentDescription = destination.label
+                                    contentDescription = stringResource(destination.labelId)
                                 )
                             }
                         }
                     },
-                    label = { Text(destination.label) },
+                    label = { Text(stringResource(destination.labelId)) },
                     selected = destination == currentDestination,
                     onClick = { currentDestination = destination }
                 )
@@ -87,10 +88,10 @@ fun SilowUZApp( onLogout: () -> Unit) {
     }
 }
 enum class AppDestinations(
-    val label: String,
-    val icon: IconResource,
+    val labelId: Int,
+    val icon: IconResource
 ) {
-    HOME("Home", IconResource.Vector(Icons.Default.Home)),
-    EXERCISE("Exercise", IconResource.Drawable(R.drawable.exercise_ico)),
-    PROFILE("Profile", IconResource.Vector(Icons.Default.AccountBox)),
+    HOME(R.string.main_menu_home, IconResource.Vector(Icons.Default.Home)),
+    EXERCISE(R.string.main_menu_training_plan, IconResource.Drawable(R.drawable.exercise_ico)),
+    PROFILE(R.string.main_menu_profile, IconResource.Vector(Icons.Default.AccountBox))
 }

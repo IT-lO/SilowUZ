@@ -1,7 +1,14 @@
 <resources>
     <string name="app_name">SilowUZ</string>
+    <string name="main_menu_home">Home</string>
+    <string name="main_menu_training_plan">My Plans</string>
+    <string name="main_menu_profile">Profile</string>
     <string name="series_info_reps">Reps: %1$d</string>
     <string name="series_info_series">Series: %1$d</string>
     <string name="series_info_weight">Weight: %1$f</string>
     <string name="series_info_duration">Duration: %1$s</string>
+    <string name="button_add_exercise_or_series">Add Exercise or Series</string>
+    <string name="button_add_series">Add Series</string>
+    <string name="button_add_exercise">Add Exercise</string>
+    <string name="exercise_info_name">Name of the exercise</string>
 </resources>
