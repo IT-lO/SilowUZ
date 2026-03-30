@@ -19,6 +19,8 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -31,23 +33,26 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.components.AxisBase
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
-import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.formatter.ValueFormatter
 import com.itio.silowuz.ui.theme.SubTextGray
 import com.itio.silowuz.ui.theme.MainGreen
 import com.itio.silowuz.ui.theme.SecondaryGreen
 import com.itio.silowuz.ui.theme.White
+import com.itio.silowuz.viewmodel.HomeViewModel
 
-lateinit var barEntriesList: ArrayList<BarEntry>
 
 @Composable
-fun HomeScreen(paddingValues: PaddingValues){
+fun HomeScreen(paddingValues: PaddingValues,
+               homeViewModel: HomeViewModel = viewModel()){
     val context = LocalContext.current
+    val uiState by homeViewModel.uiState.collectAsState()
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -73,12 +78,12 @@ fun HomeScreen(paddingValues: PaddingValues){
             ){
                 Column {
                     Text(
-                        text = "Witaj, Użytkowniku!",
+                        text = "Witaj, ${uiState.userName}!",
                         color = White,
                         fontSize = 24.sp
                     )
                     Text(
-                        text = "niedziela, 29 marca 2026",
+                        text = uiState.dateString,
                         color = White,
                         fontSize = 14.sp
                     )
@@ -108,14 +113,16 @@ fun HomeScreen(paddingValues: PaddingValues){
                             .fillMaxWidth(),
                         contentAlignment = Alignment.TopCenter
                     ){
-                        Column{
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ){
                             Text(
-                                text = "3000",
+                                text = "${uiState.steps}",
                                 color = MainGreen,
                                 fontSize = 48.sp
                             )
                             Text(
-                                text = "Cel: 10 000 kroków",
+                                text = "Cel: ${uiState.stepGoal} kroków",
                                 color = SubTextGray,
                                 fontSize = 12.sp
                             )
@@ -125,7 +132,7 @@ fun HomeScreen(paddingValues: PaddingValues){
                     Spacer(modifier = Modifier.height(8.dp))
 
                     LinearProgressIndicator(
-                        progress = { 0.3f },
+                        progress = { uiState.steps.toFloat() / uiState.stepGoal.toFloat() },
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(8.dp)
@@ -141,7 +148,7 @@ fun HomeScreen(paddingValues: PaddingValues){
 
                     Row{
                         OutlinedButton(
-                            onClick = { },
+                            onClick = { homeViewModel.addSteps() },
                             modifier = Modifier,
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = White,
@@ -155,7 +162,7 @@ fun HomeScreen(paddingValues: PaddingValues){
                         Spacer(modifier = Modifier.width(8.dp))
 
                         Button(
-                            onClick = { },
+                            onClick = { homeViewModel.toggleTracking() },
                             modifier = Modifier
                                 .fillMaxWidth(),
                             colors = ButtonDefaults.buttonColors(
@@ -163,7 +170,7 @@ fun HomeScreen(paddingValues: PaddingValues){
                                 contentColor = White)
                         ) {
                             Text(
-                                text = "Stop Tracking"
+                                text = if (uiState.isTracking) "Stop Tracking" else "Start Tracking"
                             )
                         }
                     }
@@ -194,7 +201,7 @@ fun HomeScreen(paddingValues: PaddingValues){
                         {
                             Column() {
                                 Text(
-                                    text = "120",
+                                    text = "${uiState.calories}",
                                     fontSize = 32.sp,
                                     fontWeight = FontWeight.Bold
 
@@ -224,7 +231,7 @@ fun HomeScreen(paddingValues: PaddingValues){
                         {
                             Column() {
                                 Text(
-                                    text = "2.40",
+                                    text = "${uiState.distanceKm}",
                                     fontSize = 32.sp,
                                     fontWeight = FontWeight.Bold
 
@@ -256,7 +263,7 @@ fun HomeScreen(paddingValues: PaddingValues){
                         {
                             Column() {
                                 Text(
-                                    text = "7",
+                                    text = "${uiState.streakDays}",
                                     fontSize = 32.sp,
                                     fontWeight = FontWeight.Bold
 
@@ -286,7 +293,7 @@ fun HomeScreen(paddingValues: PaddingValues){
                         {
                             Column() {
                                 Text(
-                                    text = "45",
+                                    text = "${uiState.activeMinutes}",
                                     fontSize = 32.sp,
                                     fontWeight = FontWeight.Bold
 
@@ -318,7 +325,6 @@ fun HomeScreen(paddingValues: PaddingValues){
                         fontSize = 16.sp
                     )
 
-                    StepsBarChartData()
                     AndroidView(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -327,7 +333,7 @@ fun HomeScreen(paddingValues: PaddingValues){
                             BarChart(context).apply {
                                 val labels = listOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
 
-                                val dataSet = BarDataSet(barEntriesList, "").apply {
+                                val dataSet = BarDataSet(uiState.barEntries, "").apply {
                                     color = MainGreen.toArgb()
                                     valueTextColor = MainGreen.toArgb()
                                     valueTextSize = 12f
@@ -360,15 +366,3 @@ fun HomeScreen(paddingValues: PaddingValues){
         }
     }
 }
-
-fun StepsBarChartData(){
-    barEntriesList = ArrayList()
-    barEntriesList.add(BarEntry(0f, 100f))
-    barEntriesList.add(BarEntry(1f, 200f))
-    barEntriesList.add(BarEntry(2f, 300f))
-    barEntriesList.add(BarEntry(3f, 400f))
-    barEntriesList.add(BarEntry(4f, 500f))
-    barEntriesList.add(BarEntry(5f, 600f))
-    barEntriesList.add(BarEntry(6f, 700f))
-}
-
