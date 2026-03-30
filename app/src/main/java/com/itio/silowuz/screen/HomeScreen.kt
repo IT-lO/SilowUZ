@@ -25,16 +25,29 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.viewinterop.AndroidView
+import com.github.mikephil.charting.charts.BarChart
+import com.github.mikephil.charting.components.AxisBase
+import com.github.mikephil.charting.components.XAxis
+import com.github.mikephil.charting.data.BarData
+import com.github.mikephil.charting.data.BarDataSet
+import com.github.mikephil.charting.data.BarEntry
+import com.github.mikephil.charting.formatter.ValueFormatter
 import com.itio.silowuz.ui.theme.SubTextGray
 import com.itio.silowuz.ui.theme.MainGreen
 import com.itio.silowuz.ui.theme.SecondaryGreen
 import com.itio.silowuz.ui.theme.White
 
+lateinit var barEntriesList: ArrayList<BarEntry>
+
 @Composable
 fun HomeScreen(paddingValues: PaddingValues){
+    val context = LocalContext.current
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -112,7 +125,7 @@ fun HomeScreen(paddingValues: PaddingValues){
                     Spacer(modifier = Modifier.height(8.dp))
 
                     LinearProgressIndicator(
-                        progress = { 0.5f },
+                        progress = { 0.3f },
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(8.dp)
@@ -290,7 +303,72 @@ fun HomeScreen(paddingValues: PaddingValues){
             }
 
             // BAR CHART
+            Box(
+                modifier = Modifier
+                    .padding(horizontal = 16.dp, vertical = 10.dp)
+                    .border(1.dp, MainGreen, RoundedCornerShape(15.dp, 15.dp, 15.dp, 15.dp))
+                    .clip(shape = RoundedCornerShape(15.dp, 15.dp, 15.dp, 15.dp))
+                    .fillMaxWidth()
+                    .padding(horizontal = 15.dp, vertical = 10.dp),
+                contentAlignment = Alignment.TopStart
+            ){
+                Column() {
+                    Text(
+                        text = "Tygodniowy postęp",
+                        fontSize = 16.sp
+                    )
 
+                    StepsBarChartData()
+                    AndroidView(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(250.dp),
+                        factory = {
+                            BarChart(context).apply {
+                                val labels = listOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
+
+                                val dataSet = BarDataSet(barEntriesList, "").apply {
+                                    color = MainGreen.toArgb()
+                                    valueTextColor = MainGreen.toArgb()
+                                    valueTextSize = 12f
+                                }
+
+                                data = BarData(dataSet)
+
+                                description.isEnabled = false
+                                legend.isEnabled = false
+                                axisRight.isEnabled = false
+
+                                xAxis.apply {
+                                    position = XAxis.XAxisPosition.BOTTOM
+                                    setDrawGridLines(false)
+                                    granularity = 1f
+                                    isGranularityEnabled = true
+
+                                    valueFormatter = object : ValueFormatter() {
+                                        override fun getAxisLabel(value: Float, axis: AxisBase?): String {
+                                            return labels.getOrNull(value.toInt()) ?: ""
+                                        }
+                                    }
+                                }
+                                invalidate()
+                            }
+                        }
+                    )
+                }
+            }
         }
     }
 }
+
+fun StepsBarChartData(){
+    barEntriesList = ArrayList()
+    barEntriesList.add(BarEntry(0f, 100f))
+    barEntriesList.add(BarEntry(1f, 200f))
+    barEntriesList.add(BarEntry(2f, 300f))
+    barEntriesList.add(BarEntry(3f, 400f))
+    barEntriesList.add(BarEntry(4f, 500f))
+    barEntriesList.add(BarEntry(5f, 600f))
+    barEntriesList.add(BarEntry(6f, 700f))
+}
+

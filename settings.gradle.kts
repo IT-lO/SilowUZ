@@ -19,6 +19,9 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+
+        // For HomeScreen bar chart
+        maven(url = uri("https://jitpack.io/"))
     }
 }
 
