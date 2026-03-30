@@ -6,13 +6,8 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -23,11 +18,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.waterfall
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -35,7 +28,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Surface
@@ -49,15 +41,16 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.itio.silowuz.R
+import com.itio.silowuz.component.exercise.ExerciseCard
+import com.itio.silowuz.component.exercise.ModeSwitch
+import com.itio.silowuz.component.exercise.PlanCard
 import com.itio.silowuz.`interface`.IconResource
 
 data class Exercise(
@@ -68,7 +61,7 @@ data class Exercise(
     val duration: Int?
 )
 
-data class ExerciseSeries(
+data class TrainingPlan(
     val name: String,
     val exerciseList: List<Exercise>,
 )
@@ -87,6 +80,8 @@ fun ExerciseScreen(paddingValues: PaddingValues){
     val addSeriesIcon : IconResource = IconResource.Drawable(R.drawable.add_series_ico)
 
     var plansMode by remember { mutableStateOf(true) }
+    var plan = TrainingPlan(name = "Plan", exerciseList = exerciseList )
+
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -171,73 +166,23 @@ fun ExerciseScreen(paddingValues: PaddingValues){
     ) { paddingValues ->
         LazyColumn(
             modifier = Modifier
-                .padding(paddingValues)
+                .padding(paddingValues),
+            contentPadding = PaddingValues(bottom = 80.dp)
         ){
-            if(!plansMode){
-                items(exerciseList){ exercise ->
-                    OutlinedCard(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(PaddingValues(16.dp, 4.dp)),
-                        border = BorderStroke(1.dp, Color.Black)
-                    ) {
-                        Row(
-                            modifier = Modifier
-                                .padding(8.dp)
-                                .fillMaxSize(),
-
-                            ) {
-                            Column(
-                                modifier = Modifier
-                                    .padding(8.dp)
-                                    .weight(1f),
-                                horizontalAlignment = Alignment.Start,
-                                verticalArrangement = Arrangement.Center
-                            ) {
-                                Text(
-                                    text = exercise.name,
-                                )
-                                Text(
-                                    text = exercise.reps.toString(),
-                                )
-                                Text(
-                                    text = exercise.series.toString(),
-                                )
-                                Text(
-                                    text = exercise.weight.toString(),
-                                )
-                                Text(
-                                    text = exercise.duration.toString(),
-                                )
-                            }
-                            Column(
-                                modifier = Modifier
-                                    .padding(8.dp)
-                                    .width(IntrinsicSize.Max),
-                                horizontalAlignment = Alignment.End,
-                                verticalArrangement = Arrangement.spacedBy(4.dp)
-                            ) {
-                                TextButton(
-                                    onClick = {  },
-                                    modifier = Modifier.fillMaxSize()
-                                ) {
-                                    Text(text = "Edit")
-                                }
-                                TextButton(
-                                    onClick = {
-                                        exerciseList = exerciseList - exercise
-                                    },
-                                    modifier = Modifier.fillMaxSize()
-                                ) {
-                                    Text(text = "Delete")
-                                }
-                            }
-                        }
+            if (!plansMode) {
+                items(exerciseList) { exercise ->
+                    ExerciseCard(
+                        exercise = exercise,
+                        onEdit = { },
+                        onDelete = { exerciseList = exerciseList - exercise }
+                    )
+                }
+            } else {
+                if(!exerciseList.isEmpty()){
+                    item {
+                        PlanCard(plan)
                     }
                 }
-            }
-            else{
-                // TODO
             }
         }
     }
@@ -278,46 +223,6 @@ fun ExerciseScreen(paddingValues: PaddingValues){
                     }
                 }
             }
-        }
-    }
-}
-
-@Composable
-fun ModeSwitch(
-    plansMode: Boolean,
-    onChangeMode: (Boolean) -> Unit
-) {
-    Row(
-        modifier = Modifier
-            .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(50))
-            .padding(4.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Box(
-            modifier = Modifier
-                .clip(RoundedCornerShape(50))
-                .background(if (plansMode) MaterialTheme.colorScheme.primary else Color.Transparent)
-                .clickable { onChangeMode(true) }
-                .padding(horizontal = 16.dp, vertical = 6.dp),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = "Plans",
-                color = if (plansMode) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        }
-        Box(
-            modifier = Modifier
-                .clip(RoundedCornerShape(50))
-                .background(if (!plansMode) MaterialTheme.colorScheme.primary else Color.Transparent)
-                .clickable { onChangeMode(false) }
-                .padding(horizontal = 16.dp, vertical = 6.dp),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = "Exercises",
-                color = if (!plansMode) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant
-            )
         }
     }
 }
