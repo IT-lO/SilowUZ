@@ -1,3 +1,17 @@
 <resources>
-    <string name="app_name">SilowUZ</string>
+    <string name="app_name" translatable="false">SilowUZ</string>
+    <string name="profile_screen">Profile Screen</string>
+    <string name="logout">Logout</string>
+    <string name="welcome_in">Welcome to</string>
+    <string name="login">Login</string>
+    <string name="stop_tracking">Stop Tracking</string>
+    <string name="weekly_progress">Weekly progress</string>
+    <string name="active_minutes">Minutes active</string>
+    <string name="training_day_streak">Workout streak</string>
+    <string name="todays_steps">Todays steps</string>
+    <string name="kcal" translatable="false">kcal</string>
+    <string name="toggle_language">Toggle Language</string>
+    <string name="home">Home</string>
+    <string name="plans">Plans</string>
+    <string name="profile">Profile</string>
 </resources>
