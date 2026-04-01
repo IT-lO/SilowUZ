@@ -27,6 +27,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -38,6 +39,7 @@ import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.formatter.ValueFormatter
+import com.itio.silowuz.R
 import com.itio.silowuz.ui.theme.SubTextGray
 import com.itio.silowuz.ui.theme.MainGreen
 import com.itio.silowuz.ui.theme.SecondaryGreen
@@ -46,15 +48,15 @@ import com.itio.silowuz.ui.theme.White
 lateinit var barEntriesList: ArrayList<BarEntry>
 
 @Composable
-fun HomeScreen(paddingValues: PaddingValues){
+fun HomeScreen(paddingValues: PaddingValues) {
     val context = LocalContext.current
     Box(
         modifier = Modifier
             .fillMaxSize()
             .padding(paddingValues),
         contentAlignment = Alignment.TopCenter
-    ){
-        Column{
+    ) {
+        Column {
             // WELCOME
             Box(
                 modifier = Modifier
@@ -70,7 +72,7 @@ fun HomeScreen(paddingValues: PaddingValues){
                     .fillMaxWidth()
                     .padding(horizontal = 15.dp, vertical = 10.dp),
                 contentAlignment = Alignment.TopStart
-            ){
+            ) {
                 Column {
                     Text(
                         text = "Witaj, Użytkowniku!",
@@ -94,10 +96,10 @@ fun HomeScreen(paddingValues: PaddingValues){
                     .fillMaxWidth()
                     .padding(horizontal = 15.dp, vertical = 10.dp),
                 contentAlignment = Alignment.TopStart
-            ){
+            ) {
                 Column {
                     Text(
-                        text = "Dzisiejsze kroki",
+                        text = stringResource(R.string.todays_steps),
                         fontSize = 16.sp
                     )
 
@@ -107,8 +109,8 @@ fun HomeScreen(paddingValues: PaddingValues){
                         modifier = Modifier
                             .fillMaxWidth(),
                         contentAlignment = Alignment.TopCenter
-                    ){
-                        Column{
+                    ) {
+                        Column {
                             Text(
                                 text = "3000",
                                 color = MainGreen,
@@ -139,13 +141,14 @@ fun HomeScreen(paddingValues: PaddingValues){
 
                     Spacer(modifier = Modifier.height(8.dp))
 
-                    Row{
+                    Row {
                         OutlinedButton(
                             onClick = { },
                             modifier = Modifier,
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = White,
-                                contentColor = MainGreen)
+                                contentColor = MainGreen
+                            )
                         ) {
                             Text(
                                 text = "+100 kroków (Test)"
@@ -160,10 +163,11 @@ fun HomeScreen(paddingValues: PaddingValues){
                                 .fillMaxWidth(),
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = MainGreen,
-                                contentColor = White)
+                                contentColor = White
+                            )
                         ) {
                             Text(
-                                text = "Stop Tracking"
+                                text = stringResource(R.string.stop_tracking)
                             )
                         }
                     }
@@ -176,7 +180,7 @@ fun HomeScreen(paddingValues: PaddingValues){
                     .padding(horizontal = 16.dp, vertical = 10.dp)
                     .fillMaxWidth(),
                 contentAlignment = Alignment.TopStart
-            ){
+            ) {
                 Column() {
                     Row() {
                         Box(
@@ -200,7 +204,7 @@ fun HomeScreen(paddingValues: PaddingValues){
 
                                 )
                                 Text(
-                                    text = "kcal",
+                                    text = stringResource(R.string.kcal),
                                     color = SubTextGray,
                                     fontSize = 12.sp
                                 )
@@ -262,7 +266,7 @@ fun HomeScreen(paddingValues: PaddingValues){
 
                                 )
                                 Text(
-                                    text = "Seria treningów dni",
+                                    text = stringResource(R.string.training_day_streak),
                                     color = SubTextGray,
                                     fontSize = 12.sp
                                 )
@@ -292,7 +296,7 @@ fun HomeScreen(paddingValues: PaddingValues){
 
                                 )
                                 Text(
-                                    text = "Aktywne minuty",
+                                    text = stringResource(R.string.active_minutes),
                                     color = SubTextGray,
                                     fontSize = 12.sp
                                 )
@@ -311,10 +315,10 @@ fun HomeScreen(paddingValues: PaddingValues){
                     .fillMaxWidth()
                     .padding(horizontal = 15.dp, vertical = 10.dp),
                 contentAlignment = Alignment.TopStart
-            ){
+            ) {
                 Column() {
                     Text(
-                        text = "Tygodniowy postęp",
+                        text = stringResource(R.string.weekly_progress),
                         fontSize = 16.sp
                     )
 
@@ -346,7 +350,10 @@ fun HomeScreen(paddingValues: PaddingValues){
                                     isGranularityEnabled = true
 
                                     valueFormatter = object : ValueFormatter() {
-                                        override fun getAxisLabel(value: Float, axis: AxisBase?): String {
+                                        override fun getAxisLabel(
+                                            value: Float,
+                                            axis: AxisBase?
+                                        ): String {
                                             return labels.getOrNull(value.toInt()) ?: ""
                                         }
                                     }
@@ -361,7 +368,7 @@ fun HomeScreen(paddingValues: PaddingValues){
     }
 }
 
-fun StepsBarChartData(){
+fun StepsBarChartData() {
     barEntriesList = ArrayList()
     barEntriesList.add(BarEntry(0f, 100f))
     barEntriesList.add(BarEntry(1f, 200f))
