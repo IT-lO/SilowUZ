@@ -52,16 +52,14 @@ fun ExerciseScreen(paddingValues: PaddingValues){
 
     var showExerciseDialog by remember { mutableStateOf(false) }
     var exerciseList by remember { mutableStateOf(listOf<Exercise>()) }
-
     var showMenu by remember { mutableStateOf(false) }
-    val iconRotation by animateFloatAsState(targetValue = if (showMenu) 45f else 0f)
+    var plansMode by remember { mutableStateOf(true) }
+    var exerciseToEdit by remember { mutableStateOf<Exercise?>(null) }
+    var plan = TrainingPlan(name = "Plan", exerciseList = exerciseList)
 
     val addExerciseIcon : IconResource = IconResource.Drawable(R.drawable.add_exercise_ico)
     val addSeriesIcon : IconResource = IconResource.Drawable(R.drawable.add_series_ico)
-
-    var plansMode by remember { mutableStateOf(true) }
-    var plan = TrainingPlan(name = "Plan", exerciseList = exerciseList)
-
+    val iconRotation by animateFloatAsState(targetValue = if (showMenu) 45f else 0f)
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -153,7 +151,7 @@ fun ExerciseScreen(paddingValues: PaddingValues){
                 items(exerciseList) { exercise ->
                     ExerciseCard(
                         exercise = exercise,
-                        onEdit = { },
+                        onEdit = {exerciseToEdit = exercise},
                         onDelete = { exerciseList = exerciseList - exercise }
                     )
                 }
@@ -172,9 +170,27 @@ fun ExerciseScreen(paddingValues: PaddingValues){
             onDismissRequest = {
                 showExerciseDialog = false
             },
-            onSave = { repsValue ->
-                exerciseList = exerciseList + Exercise("Biceps Curl", repsValue, 3, 99.9, 0)
+            onSave = { name, repsValue, setsValue, weightValue, durationValue ->
+                exerciseList = exerciseList + Exercise(name, repsValue, setsValue, weightValue, durationValue)
                 showExerciseDialog = false
+            },
+            paddingValues = paddingValues
+        )
+    }
+
+    exerciseToEdit?.let { exercise ->
+        ExerciseDialog(
+            exercise = exercise,
+            onDismissRequest = {
+                exerciseToEdit = null
+            },
+            onSave = { name, reps, sets, weight, duration ->
+                val updatedExercise = Exercise(name, reps, sets, weight, duration)
+
+                exerciseList = exerciseList.map {
+                    if (it == exercise) updatedExercise else it
+                }
+                exerciseToEdit = null
             },
             paddingValues = paddingValues
         )

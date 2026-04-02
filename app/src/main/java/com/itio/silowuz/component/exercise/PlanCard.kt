@@ -31,7 +31,7 @@ import com.itio.silowuz.ui.theme.White
 @Composable
 fun PlanCard(
     trainingPlan: TrainingPlan,
-    // TODO dodać delegate funckję do usuwania planu
+    // TODO add delegate function for plan removal
 ) {
     Column(
         modifier = Modifier
@@ -62,7 +62,7 @@ fun PlanCard(
                     modifier = Modifier.weight(1f)
                 )
                 Text(
-                    text = "${exercise.series}x${exercise.reps}"
+                    text = "${exercise.sets}x${exercise.reps}"
                 )
             }
             HorizontalDivider(color = SecondaryGreen)

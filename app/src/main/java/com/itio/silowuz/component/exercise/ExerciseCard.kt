@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.itio.silowuz.R
 import com.itio.silowuz.dataclass.exercise.Exercise
 
@@ -46,11 +47,11 @@ fun ExerciseCard(
                 horizontalAlignment = Alignment.Start,
                 verticalArrangement = Arrangement.Center
             ) {
-                Text(text = exercise.name)
-                Text(text = exercise.reps.toString())
-                Text(text = exercise.series.toString())
-                Text(text = exercise.weight.toString())
-                Text(text = exercise.duration.toString())
+                Text(text = exercise.name, fontSize = 30.sp)
+                Text(text = stringResource(R.string.exercise_reps) + ": " + exercise.reps.toString())
+                Text(text = stringResource(R.string.exercise_sets) + ": " + exercise.sets.toString())
+                Text(text = stringResource(R.string.exercise_weight) + ": " + exercise.weight.toString())
+                Text(text = stringResource(R.string.exercise_duration) + ": " + exercise.duration.toString())
             }
             Column(
                 modifier = Modifier
