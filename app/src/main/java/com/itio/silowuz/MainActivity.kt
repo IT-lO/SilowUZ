@@ -1,9 +1,9 @@
 package com.itio.silowuz
 
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBox
@@ -19,13 +19,14 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import com.itio.silowuz.`interface`.IconResource
 import com.itio.silowuz.screen.ExerciseScreen
 import com.itio.silowuz.screen.HomeScreen
 import com.itio.silowuz.screen.LoginScreen
 import com.itio.silowuz.screen.ProfileScreen
 import com.itio.silowuz.ui.theme.SilowUZTheme
-class MainActivity : ComponentActivity() {
+class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -59,18 +60,18 @@ fun SilowUZApp( onLogout: () -> Unit) {
                             is IconResource.Vector -> {
                                 Icon(
                                     imageVector = iconRes.imageVector,
-                                    contentDescription = destination.label
+                                    contentDescription = stringResource(destination.labelId)
                                 )
                             }
                             is IconResource.Drawable -> {
                                 Icon(
                                     painter = painterResource(id = iconRes.resId),
-                                    contentDescription = destination.label
+                                    contentDescription = stringResource(destination.labelId)
                                 )
                             }
                         }
                     },
-                    label = { Text(destination.label) },
+                    label = { Text(stringResource(destination.labelId)) },
                     selected = destination == currentDestination,
                     onClick = { currentDestination = destination }
                 )
@@ -80,17 +81,17 @@ fun SilowUZApp( onLogout: () -> Unit) {
         Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
             when(currentDestination){
                 AppDestinations.HOME -> HomeScreen(innerPadding)
-                AppDestinations.EXERCISE -> ExerciseScreen(innerPadding)
+                AppDestinations.PLANS -> ExerciseScreen(innerPadding)
                 AppDestinations.PROFILE -> ProfileScreen(innerPadding, onLogout)
             }
         }
     }
 }
 enum class AppDestinations(
-    val label: String,
-    val icon: IconResource,
+    val labelId: Int,
+    val icon: IconResource
 ) {
-    HOME("Home", IconResource.Vector(Icons.Default.Home)),
-    EXERCISE("Exercise", IconResource.Drawable(R.drawable.exercise_ico)),
-    PROFILE("Profile", IconResource.Vector(Icons.Default.AccountBox)),
+    HOME(R.string.home, IconResource.Vector(Icons.Default.Home)),
+    PLANS(R.string.plans, IconResource.Drawable(R.drawable.exercise_ico)),
+    PROFILE(R.string.profile, IconResource.Vector(Icons.Default.AccountBox))
 }

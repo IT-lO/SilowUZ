@@ -29,6 +29,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -40,6 +41,7 @@ import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.formatter.ValueFormatter
+import com.itio.silowuz.R
 import com.itio.silowuz.ui.theme.SubTextGray
 import com.itio.silowuz.ui.theme.MainGreen
 import com.itio.silowuz.ui.theme.SecondaryGreen
@@ -102,7 +104,7 @@ fun HomeScreen(paddingValues: PaddingValues,
             ){
                 Column {
                     Text(
-                        text = "Dzisiejsze kroki",
+                        text = stringResource(R.string.todays_steps),
                         fontSize = 16.sp
                     )
 
@@ -170,7 +172,7 @@ fun HomeScreen(paddingValues: PaddingValues,
                                 contentColor = White)
                         ) {
                             Text(
-                                text = if (uiState.isTracking) "Stop Tracking" else "Start Tracking"
+                                text = if (uiState.isTracking)  stringResource(R.string.stop_tracking) else stringResource(R.string.start_tracking)
                             )
                         }
                     }
@@ -207,7 +209,7 @@ fun HomeScreen(paddingValues: PaddingValues,
 
                                 )
                                 Text(
-                                    text = "kcal",
+                                    text = stringResource(R.string.kcal),
                                     color = SubTextGray,
                                     fontSize = 12.sp
                                 )
@@ -269,7 +271,7 @@ fun HomeScreen(paddingValues: PaddingValues,
 
                                 )
                                 Text(
-                                    text = "Seria treningów dni",
+                                    text = stringResource(R.string.training_day_streak),
                                     color = SubTextGray,
                                     fontSize = 12.sp
                                 )
@@ -299,7 +301,7 @@ fun HomeScreen(paddingValues: PaddingValues,
 
                                 )
                                 Text(
-                                    text = "Aktywne minuty",
+                                    text = stringResource(R.string.active_minutes),
                                     color = SubTextGray,
                                     fontSize = 12.sp
                                 )
@@ -321,7 +323,7 @@ fun HomeScreen(paddingValues: PaddingValues,
             ){
                 Column() {
                     Text(
-                        text = "Tygodniowy postęp",
+                        text = stringResource(R.string.weekly_progress),
                         fontSize = 16.sp
                     )
 
