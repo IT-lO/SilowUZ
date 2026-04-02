@@ -98,7 +98,7 @@ fun ExerciseScreen(paddingValues: PaddingValues){
 
                     ) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            Text(text = stringResource(R.string.button_add_exercise))
+                            Text(text = stringResource(R.string.create_exercise))
                             Spacer(modifier = Modifier.width(8.dp))
                             SmallFloatingActionButton(
                                 onClick = { showExerciseDialog = true},
@@ -107,7 +107,7 @@ fun ExerciseScreen(paddingValues: PaddingValues){
                                     is IconResource.Drawable -> {
                                         Icon(
                                             painter = painterResource(id = addExerciseIcon.resId),
-                                            contentDescription = stringResource(R.string.button_add_exercise)
+                                            contentDescription = stringResource(R.string.create_exercise)
                                         )
                                     }
                                     else -> { }
@@ -115,7 +115,7 @@ fun ExerciseScreen(paddingValues: PaddingValues){
                             }
                         }
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            Text(text = stringResource(R.string.button_add_series))
+                            Text(text = stringResource(R.string.create_plan))
                             Spacer(modifier = Modifier.width(8.dp))
                             SmallFloatingActionButton(
                                 onClick = {},
@@ -124,7 +124,7 @@ fun ExerciseScreen(paddingValues: PaddingValues){
                                     is IconResource.Drawable -> {
                                         Icon(
                                             painter = painterResource(id = addSeriesIcon.resId),
-                                            contentDescription = stringResource(R.string.button_add_series)
+                                            contentDescription = stringResource(R.string.create_plan)
                                         )
                                     }
                                     else -> { }
@@ -137,7 +137,7 @@ fun ExerciseScreen(paddingValues: PaddingValues){
                     onClick = { showMenu = !showMenu },
                 ) {
                     Icon(Icons.Filled.Add,
-                        contentDescription = stringResource(id = R.string.button_add_exercise_or_series),
+                        contentDescription = stringResource(id = R.string.exercise_menu),
                         modifier = Modifier.rotate(iconRotation)
                     )
                 }

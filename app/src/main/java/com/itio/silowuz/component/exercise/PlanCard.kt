@@ -20,7 +20,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.itio.silowuz.R
 import com.itio.silowuz.dataclass.exercise.TrainingPlan
 import com.itio.silowuz.ui.theme.MainGreen
 import com.itio.silowuz.ui.theme.SecondaryGreen
@@ -83,7 +85,7 @@ fun PlanCard(
                     .height(height = 48.dp),
                 contentAlignment = Alignment.Center
             ) {
-                Text(text = "Launch Training", color = White)
+                Text(text = stringResource(R.string.start_training), color = White)
             }
         }
         Spacer(modifier = Modifier.height(8.dp))

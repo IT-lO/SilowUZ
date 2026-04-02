@@ -13,7 +13,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.itio.silowuz.R
 
 @Composable
 fun ModeSwitch(
@@ -35,7 +37,7 @@ fun ModeSwitch(
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = "Plans",
+                text = stringResource(R.string.plans),
                 color = if (plansMode) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
@@ -48,7 +50,7 @@ fun ModeSwitch(
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = "Exercises",
+                text = stringResource(R.string.exercises),
                 color = if (!plansMode) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant
             )
         }

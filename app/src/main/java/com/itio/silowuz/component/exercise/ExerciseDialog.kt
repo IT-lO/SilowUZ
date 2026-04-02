@@ -68,34 +68,34 @@ fun ExerciseDialog(
                     )
                     .padding(16.dp),
             ) {
-                Text(text = stringResource(R.string.exercise_info_name))
+                Text(text = stringResource(R.string.exercise_name))
                 TextField(
                     value = name,
                     onValueChange = { name = it },
-                    label = { Text(text = stringResource(R.string.exercise_label_name), color = MaterialTheme.colorScheme.onSurface) },
+                    label = { Text(text = stringResource(R.string.exercise_name), color = MaterialTheme.colorScheme.onSurface) },
                     modifier = Modifier
                         .padding(8.dp)
                         .weight(1f),
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 Row() {
-                    Text(text = stringResource(R.string.exercise_info_reps))
+                    Text(text = stringResource(R.string.exercise_reps))
                     TextField(
                         value = defaultReps,
                         onValueChange = { defaultReps = it },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
-                        label = { Text(text = stringResource(R.string.exercise_label_reps), color = MaterialTheme.colorScheme.onSurface) },
+                        label = { Text(text = stringResource(R.string.exercise_reps), color = MaterialTheme.colorScheme.onSurface) },
                         modifier = Modifier
                             .padding(8.dp)
                             .weight(1f),
                     )
                     Spacer(modifier = Modifier.height(16.dp))
-                    Text(text = stringResource(R.string.exercise_info_sets))
+                    Text(text = stringResource(R.string.exercise_sets))
                     TextField(
                         value = defaultSets,
                         onValueChange = { defaultSets = it },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
-                        label = { Text(text = stringResource(R.string.exercise_label_sets), color = MaterialTheme.colorScheme.onSurface) },
+                        label = { Text(text = stringResource(R.string.exercise_sets), color = MaterialTheme.colorScheme.onSurface) },
                         modifier = Modifier
                             .padding(8.dp)
                             .weight(1f),
@@ -104,12 +104,12 @@ fun ExerciseDialog(
                 }
                 Row() {
                     Column() {
-                        Text(text = stringResource(R.string.exercise_info_weight))
+                        Text(text = stringResource(R.string.exercise_weight))
                         TextField(
                             value = defaultWeight,
                             onValueChange = { defaultWeight = it },
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
-                            label = { Text(text = stringResource(R.string.exercise_label_weight), color = MaterialTheme.colorScheme.onSurface) },
+                            label = { Text(text = stringResource(R.string.exercise_weight), color = MaterialTheme.colorScheme.onSurface) },
                             modifier = Modifier
                                 .padding(8.dp)
                                 .weight(1f),
@@ -117,12 +117,12 @@ fun ExerciseDialog(
                     }
                     Spacer(modifier = Modifier.height(16.dp))
                     Column() {
-                        Text(text = stringResource(R.string.exercise_info_duration))
+                        Text(text = stringResource(R.string.exercise_duration))
                         TextField(
                             value = defaultDuration,
                             onValueChange = { defaultDuration = it },
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
-                            label = { Text(text = stringResource(R.string.exercise_label_duration), color = MaterialTheme.colorScheme.onSurface) },
+                            label = { Text(text = stringResource(R.string.exercise_duration), color = MaterialTheme.colorScheme.onSurface) },
                             modifier = Modifier
                                 .padding(8.dp)
                                 .weight(1f),
@@ -138,7 +138,7 @@ fun ExerciseDialog(
                     TextButton(
                         onClick = {onDismissRequest}
                     ) {
-                        Text(text = stringResource(R.string.info_cancel))
+                        Text(text = stringResource(R.string.cancel))
                     }
                     Button(
                         onClick = {
@@ -146,7 +146,7 @@ fun ExerciseDialog(
                             onSave(repsValue)
                         },
                     ) {
-                        Text(text = stringResource(R.string.info_save))
+                        Text(text = stringResource(R.string.save))
                     }
                 }
             }
