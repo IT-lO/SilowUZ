@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="profile_screen">Ekran Profilu</string>
+    <string name="logout">Wyloguj</string>
+    <string name="welcome_in">Witamy w</string>
+    <string name="login">Zaloguj się</string>
+    <string name="todays_steps">Dzisiejsze kroki</string>
+    <string name="training_day_streak">Seria dni treningowych</string>
+    <string name="active_minutes">Aktywne minuty</string>
+    <string name="weekly_progress">Tygodniowy postęp</string>
+    <string name="stop_tracking">Przestań liczyć</string>
+    <string name="toggle_language">Przełącz język</string>
+    <string name="home">Start</string>
+    <string name="plans">Plany</string>
+    <string name="profile">Konto</string>
+</resources>

@@ -1,25 +1,17 @@
 <resources>
-    <string name="app_name">SilowUZ</string>
-    <string name="main_menu_home">Home</string>
-    <string name="main_menu_training_plan">My Plans</string>
-    <string name="main_menu_profile">Profile</string>
-    <string name="series_info_reps">Reps: %1$d</string>
-    <string name="series_info_series">Series: %1$d</string>
-    <string name="series_info_weight">Weight: %1$f</string>
-    <string name="series_info_duration">Duration: %1$s</string>
-    <string name="button_add_exercise_or_series">Add Exercise or Series</string>
-    <string name="button_add_series">Add Series</string>
-    <string name="button_add_exercise">Add Exercise</string>
-    <string name="exercise_info_name">Name of the exercise</string>
-    <string name="exercise_info_reps">Default reps</string>
-    <string name="exercise_info_sets">Default sets</string>
-    <string name="exercise_info_weight">Default weight</string>
-    <string name="exercise_info_duration">Default duration</string>
-    <string name="exercise_label_name">Name</string>
-    <string name="exercise_label_reps">Reps</string>
-    <string name="exercise_label_sets">Sets</string>
-    <string name="exercise_label_weight">Weight</string>
-    <string name="exercise_label_duration">Duration</string>
-    <string name="info_cancel">Cancel</string>
-    <string name="info_save">Save</string>
+    <string name="app_name" translatable="false">SilowUZ</string>
+    <string name="profile_screen">Profile Screen</string>
+    <string name="logout">Logout</string>
+    <string name="welcome_in">Welcome to</string>
+    <string name="login">Login</string>
+    <string name="stop_tracking">Stop Tracking</string>
+    <string name="weekly_progress">Weekly progress</string>
+    <string name="active_minutes">Minutes active</string>
+    <string name="training_day_streak">Workout streak</string>
+    <string name="todays_steps">Todays steps</string>
+    <string name="kcal" translatable="false">kcal</string>
+    <string name="toggle_language">Toggle Language</string>
+    <string name="home">Home</string>
+    <string name="plans">Plans</string>
+    <string name="profile">Profile</string>
 </resources>

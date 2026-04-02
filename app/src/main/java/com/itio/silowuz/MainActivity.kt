@@ -1,7 +1,6 @@
 package com.itio.silowuz
 
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -82,7 +81,7 @@ fun SilowUZApp( onLogout: () -> Unit) {
         Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
             when(currentDestination){
                 AppDestinations.HOME -> HomeScreen(innerPadding)
-                AppDestinations.EXERCISE -> ExerciseScreen(innerPadding)
+                AppDestinations.PLANS -> ExerciseScreen(innerPadding)
                 AppDestinations.PROFILE -> ProfileScreen(innerPadding, onLogout)
             }
         }
@@ -92,7 +91,7 @@ enum class AppDestinations(
     val labelId: Int,
     val icon: IconResource
 ) {
-    HOME(R.string.main_menu_home, IconResource.Vector(Icons.Default.Home)),
-    EXERCISE(R.string.main_menu_training_plan, IconResource.Drawable(R.drawable.exercise_ico)),
-    PROFILE(R.string.main_menu_profile, IconResource.Vector(Icons.Default.AccountBox))
+    HOME(R.string.home, IconResource.Vector(Icons.Default.Home)),
+    PLANS(R.string.plans, IconResource.Drawable(R.drawable.exercise_ico)),
+    PROFILE(R.string.profile, IconResource.Vector(Icons.Default.AccountBox))
 }
