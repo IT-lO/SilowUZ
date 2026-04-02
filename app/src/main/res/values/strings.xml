@@ -11,4 +11,15 @@
     <string name="button_add_series">Add Series</string>
     <string name="button_add_exercise">Add Exercise</string>
     <string name="exercise_info_name">Name of the exercise</string>
+    <string name="exercise_info_reps">Default reps</string>
+    <string name="exercise_info_sets">Default sets</string>
+    <string name="exercise_info_weight">Default weight</string>
+    <string name="exercise_info_duration">Default duration</string>
+    <string name="exercise_label_name">Name</string>
+    <string name="exercise_label_reps">Reps</string>
+    <string name="exercise_label_sets">Sets</string>
+    <string name="exercise_label_weight">Weight</string>
+    <string name="exercise_label_duration">Duration</string>
+    <string name="info_cancel">Cancel</string>
+    <string name="info_save">Save</string>
 </resources>
