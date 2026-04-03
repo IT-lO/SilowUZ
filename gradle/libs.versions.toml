@@ -13,6 +13,7 @@ firebaseDatabase = "22.0.1"
 firebaseAuthKtx = "24.0.1"
 mpandroidchart = "v3.1.0"
 uiUnit = "1.10.6"
+uiGraphics = "1.10.6"
 appcompat = "1.7.1"
 
 [libraries]
@@ -35,6 +36,7 @@ androidx-compose-material3-adaptive-navigation-suite = { group = "androidx.compo
 firebase-database = { group = "com.google.firebase", name = "firebase-database", version.ref = "firebaseDatabase" }
 firebase-auth = { group = "com.google.firebase", name = "firebase-auth", version.ref = "firebaseAuthKtx" }
 androidx-compose-ui-unit = { group = "androidx.compose.ui", name = "ui-unit", version.ref = "uiUnit" }
+androidx-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics", version.ref = "uiGraphics" }
 mpandroidchart = { module = "com.github.PhilJay:MPAndroidChart", version.ref = "mpandroidchart" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 [plugins]
