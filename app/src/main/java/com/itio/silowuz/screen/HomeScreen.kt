@@ -80,7 +80,7 @@ fun HomeScreen(paddingValues: PaddingValues,
             ){
                 Column {
                     Text(
-                        text = "Witaj, ${uiState.userName}!",
+                        text = stringResource(R.string.welcome) + ", ${uiState.userName}!",
                         color = White,
                         fontSize = 24.sp
                     )

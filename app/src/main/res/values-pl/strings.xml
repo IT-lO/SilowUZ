@@ -3,6 +3,7 @@
     <string name="profile_screen">Ekran Profilu</string>
     <string name="logout">Wyloguj</string>
     <string name="welcome_in">Witamy w</string>
+    <string name="welcome">Witaj</string>
     <string name="login">Zaloguj się</string>
     <string name="todays_steps">Dzisiejsze kroki</string>
     <string name="training_day_streak">Seria dni treningowych</string>
