@@ -31,7 +31,7 @@ fun RegisterScreen(onRegisterSuccess: () -> Unit, onNavigateToLogin: () -> Unit)
 
     val scrollState = rememberScrollState()
     var errorMessageRes by remember { mutableStateOf<Int?>(null) }
-    var firebaseErrorMessage by remember { mutableStateOf<String?>(null) } // na błędy z serwera
+    var firebaseErrorMessage by remember { mutableStateOf<String?>(null) }
 
     Box(
         modifier = Modifier
