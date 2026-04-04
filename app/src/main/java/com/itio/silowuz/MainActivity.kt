@@ -25,6 +25,7 @@ import com.itio.silowuz.screen.ExerciseScreen
 import com.itio.silowuz.screen.HomeScreen
 import com.itio.silowuz.screen.LoginScreen
 import com.itio.silowuz.screen.ProfileScreen
+import com.itio.silowuz.screen.RegisterScreen
 import com.itio.silowuz.ui.theme.SilowUZTheme
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,8 +41,28 @@ class MainActivity : AppCompatActivity() {
 @Composable
 fun MainRoot(){
     var isLoggedIn by rememberSaveable { mutableStateOf(false) }
+    var isRegistering by rememberSaveable { mutableStateOf(false) }
+
     if(!isLoggedIn){
-        LoginScreen(onLoginSuccess = {isLoggedIn = true} )
+        if (isRegistering) {
+            RegisterScreen(
+                onRegisterSuccess = {
+                    isLoggedIn = true
+                },
+                onNavigateToLogin = {
+                    isRegistering = false
+                }
+            )
+        } else {
+            LoginScreen(
+                onLoginSuccess = {
+                    isLoggedIn = true
+                },
+                onNavigateToRegister = {
+                    isRegistering = true
+                }
+            )
+        }
     }
     else{
         SilowUZApp(onLogout = {isLoggedIn = false})
