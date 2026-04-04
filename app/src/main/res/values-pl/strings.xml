@@ -27,4 +27,16 @@
     <string name="delete">Usuń</string>
     <string name="start_training">Zacznij trening</string>
     <string name="exercises">Ćwiczenia</string>
+    <string name="password">Hasło</string>
+    <string name="name">Imię</string>
+    <string name="confirm_password">Potwierdź hasło</string>
+    <string name="fill_all_fields">Wypełnij wszystkie pola</string>
+    <string name="invalid_email">Podaj poprawny adres e-mail</string>
+    <string name="weak_password">Hasło: min. 8 znaków, 1 duża litera i 1 cyfra</string>
+    <string name="passwords_not_match">Hasła nie są takie same</string>
+    <string name="unknown_error">Nieznany błąd rejestracji</string>
+    <string name="already_signed">Masz już konto?</string>
+    <string name="register">Zarejestruj</string>
+    <string name="signup">Zarejestruj się</string>
+    <string name="signin">Zaloguj się</string>
 </resources>

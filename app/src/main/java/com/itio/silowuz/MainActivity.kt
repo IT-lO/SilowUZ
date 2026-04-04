@@ -15,6 +15,7 @@ import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -27,6 +28,7 @@ import com.itio.silowuz.screen.LoginScreen
 import com.itio.silowuz.screen.ProfileScreen
 import com.itio.silowuz.screen.RegisterScreen
 import com.itio.silowuz.ui.theme.SilowUZTheme
+
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,12 +40,15 @@ class MainActivity : AppCompatActivity() {
         }
     }
 }
-@Composable
-fun MainRoot(){
-    var isLoggedIn by rememberSaveable { mutableStateOf(false) }
-    var isRegistering by rememberSaveable { mutableStateOf(false) }
 
-    if(!isLoggedIn){
+@Composable
+fun MainRoot() {
+    var isLoggedIn by remember {
+        mutableStateOf(com.google.firebase.auth.FirebaseAuth.getInstance().currentUser != null)
+    }
+    var isRegistering by remember { mutableStateOf(false) }
+
+    if (!isLoggedIn) {
         if (isRegistering) {
             RegisterScreen(
                 onRegisterSuccess = {
@@ -63,13 +68,16 @@ fun MainRoot(){
                 }
             )
         }
-    }
-    else{
-        SilowUZApp(onLogout = {isLoggedIn = false})
+    } else {
+        SilowUZApp(onLogout = {
+            com.google.firebase.auth.FirebaseAuth.getInstance().signOut()
+            isLoggedIn = false
+        })
     }
 }
+
 @Composable
-fun SilowUZApp( onLogout: () -> Unit) {
+fun SilowUZApp(onLogout: () -> Unit) {
     var currentDestination by rememberSaveable { mutableStateOf(AppDestinations.HOME) }
 
     NavigationSuiteScaffold(
@@ -77,13 +85,14 @@ fun SilowUZApp( onLogout: () -> Unit) {
             AppDestinations.entries.forEach { destination ->
                 item(
                     icon = {
-                        when(val iconRes = destination.icon){
+                        when (val iconRes = destination.icon) {
                             is IconResource.Vector -> {
                                 Icon(
                                     imageVector = iconRes.imageVector,
                                     contentDescription = stringResource(destination.labelId)
                                 )
                             }
+
                             is IconResource.Drawable -> {
                                 Icon(
                                     painter = painterResource(id = iconRes.resId),
@@ -100,7 +109,7 @@ fun SilowUZApp( onLogout: () -> Unit) {
         }
     ) {
         Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-            when(currentDestination){
+            when (currentDestination) {
                 AppDestinations.HOME -> HomeScreen(innerPadding)
                 AppDestinations.PLANS -> ExerciseScreen(innerPadding)
                 AppDestinations.PROFILE -> ProfileScreen(innerPadding, onLogout)
@@ -108,6 +117,7 @@ fun SilowUZApp( onLogout: () -> Unit) {
         }
     }
 }
+
 enum class AppDestinations(
     val labelId: Int,
     val icon: IconResource

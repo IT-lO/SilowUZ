@@ -15,6 +15,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -26,10 +27,11 @@ fun RegisterScreen(onRegisterSuccess: () -> Unit, onNavigateToLogin: () -> Unit)
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
-    var errorMessage by remember { mutableStateOf<String?>(null) }
     var isLoading by remember { mutableStateOf(false) }
 
     val scrollState = rememberScrollState()
+    var errorMessageRes by remember { mutableStateOf<Int?>(null) }
+    var firebaseErrorMessage by remember { mutableStateOf<String?>(null) } // na błędy z serwera
 
     Box(
         modifier = Modifier
@@ -55,7 +57,14 @@ fun RegisterScreen(onRegisterSuccess: () -> Unit, onNavigateToLogin: () -> Unit)
                     modifier = Modifier
                         .size(64.dp)
                         .clip(CircleShape)
-                        .background(Brush.linearGradient(listOf(LogoGradientStart, LogoGradientEnd))),
+                        .background(
+                            Brush.linearGradient(
+                                listOf(
+                                    LogoGradientStart,
+                                    LogoGradientEnd
+                                )
+                            )
+                        ),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
@@ -68,45 +77,101 @@ fun RegisterScreen(onRegisterSuccess: () -> Unit, onNavigateToLogin: () -> Unit)
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                Text(text = "SiłowUZ", color = TextMain, fontSize = 24.sp, fontWeight = FontWeight.Bold)
-                Text(text = "Zarejestruj się", color = TextGray, fontSize = 16.sp)
+                Text(
+                    text = stringResource(R.string.app_name),
+                    color = TextMain,
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(text = stringResource(R.string.signup), color = TextGray, fontSize = 16.sp)
 
                 Spacer(modifier = Modifier.height(32.dp))
 
-                InputField(label = "Imię", value = name, onValueChange = { name = it })
+                InputField(
+                    label = stringResource(R.string.name),
+                    value = name,
+                    onValueChange = { name = it })
                 Spacer(modifier = Modifier.height(16.dp))
 
-                InputField(label = "Email", value = email, onValueChange = { email = it })
+                InputField(
+                    label = stringResource(R.string.email),
+                    value = email,
+                    onValueChange = { email = it })
                 Spacer(modifier = Modifier.height(16.dp))
 
-                InputField(label = "Hasło", value = password, onValueChange = { password = it }, isPassword = true)
+                InputField(
+                    label = stringResource(R.string.password),
+                    value = password,
+                    onValueChange = { password = it },
+                    isPassword = true
+                )
                 Spacer(modifier = Modifier.height(16.dp))
 
-                InputField(label = "Potwierdź hasło", value = confirmPassword, onValueChange = { confirmPassword = it }, isPassword = true)
+                InputField(
+                    label = stringResource(R.string.confirm_password),
+                    value = confirmPassword,
+                    onValueChange = { confirmPassword = it },
+                    isPassword = true
+                )
                 Spacer(modifier = Modifier.height(16.dp))
 
-                errorMessage?.let {
+                errorMessageRes?.let { errorId ->
                     Spacer(modifier = Modifier.height(8.dp))
-                    Text(text = it, color = Color.Red, fontSize = 12.sp)
+                    Text(text = stringResource(id = errorId), color = Color.Red, fontSize = 12.sp)
+                }
+                firebaseErrorMessage?.let { errorText ->
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(text = errorText, color = Color.Red, fontSize = 12.sp)
                 }
 
                 Spacer(modifier = Modifier.height(24.dp))
 
                 Button(
                     onClick = {
+                        if (isLoading) return@Button
+
                         val emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[a-zA-Z]+\$".toRegex()
+                        val passwordRegex = "^(?=.*[A-Z])(?=.*\\d).{8,}\$".toRegex()
 
                         if (name.isBlank() || email.isBlank() || password.isBlank()) {
-                            errorMessage = "Wypełnij wszystkie pola"
+                            errorMessageRes = R.string.fill_all_fields
+                            firebaseErrorMessage = null
                         } else if (!email.matches(emailRegex)) {
-                            errorMessage = "Podaj poprawny adres e-mail"
-                        } else if (password.length < 6) {
-                            errorMessage = "Hasło musi mieć co najmniej 6 znaków"
+                            errorMessageRes = R.string.invalid_email
+                            firebaseErrorMessage = null
+                        } else if (!password.matches(passwordRegex)) {
+                            errorMessageRes = R.string.weak_password
+                            firebaseErrorMessage = null
                         } else if (password != confirmPassword) {
-                            errorMessage = "Hasła nie są takie same"
+                            errorMessageRes = R.string.passwords_not_match
+                            firebaseErrorMessage = null
                         } else {
-                            errorMessage = null
-                            onRegisterSuccess()
+                            errorMessageRes = null
+                            firebaseErrorMessage = null
+                            isLoading = true
+
+                            com.google.firebase.auth.FirebaseAuth.getInstance()
+                                .createUserWithEmailAndPassword(email, password)
+                                .addOnCompleteListener { task ->
+                                    isLoading = false
+                                    if (task.isSuccessful) {
+                                        val user = task.result?.user
+                                        val profileUpdates =
+                                            com.google.firebase.auth.UserProfileChangeRequest.Builder()
+                                                .setDisplayName(name)
+                                                .build()
+
+                                        user?.updateProfile(profileUpdates)
+                                            ?.addOnCompleteListener { profileTask ->
+                                                onRegisterSuccess()
+                                            }
+                                    } else {
+                                        firebaseErrorMessage =
+                                            (task.exception?.localizedMessage
+                                                ?: R.string.unknown_error) as String?
+                                        errorMessageRes = null
+                                    }
+                                }
                         }
                     },
                     modifier = Modifier
@@ -115,13 +180,31 @@ fun RegisterScreen(onRegisterSuccess: () -> Unit, onNavigateToLogin: () -> Unit)
                     shape = RoundedCornerShape(8.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = ButtonGreen)
                 ) {
-                    Text(text = "Zarejestruj", color = ButtonTextLight, fontSize = 14.sp, fontWeight = FontWeight.Medium)
+                    if (isLoading) {
+                        CircularProgressIndicator(
+                            color = ButtonTextLight,
+                            modifier = Modifier.size(20.dp),
+                            strokeWidth = 2.dp
+                        )
+                    } else {
+                        Text(
+                            text = stringResource(R.string.register),
+                            color = ButtonTextLight,
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Medium
+                        )
+                    }
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
 
                 TextButton(onClick = onNavigateToLogin) {
-                    Text(text = "Masz już konto?", color = LinkGreen, fontSize = 16.sp, fontWeight = FontWeight.Medium)
+                    Text(
+                        text = stringResource(R.string.already_signed),
+                        color = LinkGreen,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Medium
+                    )
                 }
             }
         }

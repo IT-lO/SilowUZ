@@ -7,8 +7,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -16,19 +14,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import kotlin.random.Random
+import com.itio.silowuz.R
 
-// Kolory z wersji LIGHT
 val BgGradientStart = Color(0xFFF0FDF4)
 val BgGradientEnd = Color(0xFFD0FAE5)
 val CardBg = Color(0xFFFFFFFF)
-val BorderColor = Color.Black.copy(alpha = 0.1f) // rgba(0, 0, 0, 0.1)
+val BorderColor = Color.Black.copy(alpha = 0.1f)
 val TextMain = Color(0xFF0A0A0A)
 val TextGray = Color(0xFF717182)
 val InputBg = Color(0xFFF3F3F5)
@@ -43,7 +41,9 @@ val CaptchaBg = Color(0xFFF9FAFB)
 fun LoginScreen(onLoginSuccess: () -> Unit, onNavigateToRegister: () -> Unit) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-
+    var isLoading by remember { mutableStateOf(false) }
+    var errorMessageRes by remember { mutableStateOf<Int?>(null) }
+    var firebaseErrorMessage by remember { mutableStateOf<String?>(null) }
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -62,7 +62,6 @@ fun LoginScreen(onLoginSuccess: () -> Unit, onNavigateToRegister: () -> Unit) {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                // Okrągłe Logo z gradientem
                 Box(
                     modifier = Modifier
                         .size(64.dp)
@@ -78,7 +77,7 @@ fun LoginScreen(onLoginSuccess: () -> Unit, onNavigateToRegister: () -> Unit) {
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
-                        painter = androidx.compose.ui.res.painterResource(id = com.itio.silowuz.R.drawable.exercise_ico),
+                        painter = androidx.compose.ui.res.painterResource(id = R.drawable.exercise_ico),
                         contentDescription = "Logo",
                         tint = Color.White,
                         modifier = Modifier.size(32.dp)
@@ -93,26 +92,58 @@ fun LoginScreen(onLoginSuccess: () -> Unit, onNavigateToRegister: () -> Unit) {
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold
                 )
-                Text(text = "Zaloguj się", color = TextGray, fontSize = 16.sp)
+                Text(text = stringResource(R.string.signin), color = TextGray, fontSize = 16.sp)
 
                 Spacer(modifier = Modifier.height(32.dp))
 
-                InputField(label = "Email", value = email, onValueChange = { email = it })
+                InputField(
+                    label = stringResource(R.string.email),
+                    value = email,
+                    onValueChange = { email = it })
 
                 Spacer(modifier = Modifier.height(16.dp))
 
                 InputField(
-                    label = "Hasło",
+                    label = stringResource(R.string.password),
                     value = password,
                     onValueChange = { password = it },
                     isPassword = true
                 )
 
+                errorMessageRes?.let { errorId ->
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(text = stringResource(id = errorId), color = Color.Red, fontSize = 12.sp)
+                }
+
+                firebaseErrorMessage?.let { errorText ->
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(text = errorText, color = Color.Red, fontSize = 12.sp)
+                }
                 Spacer(modifier = Modifier.height(24.dp))
 
                 Button(
                     onClick = {
-                        onLoginSuccess()
+                        if (isLoading) return@Button
+
+                        if (email.isBlank() || password.isBlank()) {
+                            errorMessageRes = R.string.fill_all_fields
+                        } else {
+                            errorMessageRes = null
+                            isLoading = true
+
+                            com.google.firebase.auth.FirebaseAuth.getInstance()
+                                .signInWithEmailAndPassword(email, password)
+                                .addOnCompleteListener { task ->
+                                    isLoading = false
+                                    if (task.isSuccessful) {
+                                        onLoginSuccess()
+                                    } else {
+                                        firebaseErrorMessage =
+                                            (task.exception?.localizedMessage
+                                                ?: R.string.unknown_error) as String?
+                                    }
+                                }
+                        }
                     },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -120,12 +151,20 @@ fun LoginScreen(onLoginSuccess: () -> Unit, onNavigateToRegister: () -> Unit) {
                     shape = RoundedCornerShape(8.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = ButtonGreen)
                 ) {
-                    Text(
-                        text = "Zaloguj",
-                        color = ButtonTextLight,
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Medium
-                    )
+                    if (isLoading) {
+                        CircularProgressIndicator(
+                            color = ButtonTextLight,
+                            modifier = Modifier.size(20.dp),
+                            strokeWidth = 2.dp
+                        )
+                    } else {
+                        Text(
+                            text = "Zaloguj",
+                            color = ButtonTextLight,
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Medium
+                        )
+                    }
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
