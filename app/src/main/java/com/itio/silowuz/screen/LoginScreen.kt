@@ -35,7 +35,6 @@ val ButtonTextLight = Color(0xFFFFFFFF)
 val LinkGreen = Color(0xFF00A63E)
 val LogoGradientStart = Color(0xFF00C950)
 val LogoGradientEnd = Color(0xFF009966)
-val CaptchaBg = Color(0xFFF9FAFB)
 
 @Composable
 fun LoginScreen(onLoginSuccess: () -> Unit, onNavigateToRegister: () -> Unit) {
