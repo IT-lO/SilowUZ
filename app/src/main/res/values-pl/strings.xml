@@ -29,4 +29,5 @@
     <string name="delete">Usuń</string>
     <string name="start_training">Zacznij trening</string>
     <string name="exercises">Ćwiczenia</string>
+    <string name="capital_steps">Kroki</string>
 </resources>

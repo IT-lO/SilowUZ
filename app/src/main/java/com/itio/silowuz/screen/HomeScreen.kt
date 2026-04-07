@@ -1,5 +1,7 @@
 package com.itio.silowuz.screen
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
@@ -54,6 +56,15 @@ fun HomeScreen(paddingValues: PaddingValues,
                homeViewModel: HomeViewModel = viewModel()){
     val context = LocalContext.current
     val uiState by homeViewModel.uiState.collectAsState()
+
+    // Requests permissions for tracking steps. After all permissions granted it starts tracking.
+    val permissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { result ->
+        if (result.values.all { it }) {
+            homeViewModel.startTrackingAfterPermission()
+        }
+    }
 
     Box(
         modifier = Modifier
@@ -164,7 +175,9 @@ fun HomeScreen(paddingValues: PaddingValues,
                         Spacer(modifier = Modifier.width(8.dp))
 
                         Button(
-                            onClick = { homeViewModel.toggleTracking() },
+                            onClick = { homeViewModel.toggleTracking(onPermissionRequired = { permissions ->
+                                permissionLauncher.launch(permissions)
+                            }) },
                             modifier = Modifier
                                 .fillMaxWidth(),
                             colors = ButtonDefaults.buttonColors(

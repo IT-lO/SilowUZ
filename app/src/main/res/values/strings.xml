@@ -30,4 +30,5 @@
     <string name="delete">Delete</string>
     <string name="start_training">Start Training</string>
     <string name="exercises">Exercises</string>
+    <string name="capital_steps">Steps</string>
 </resources>
