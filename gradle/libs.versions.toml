@@ -12,12 +12,14 @@ googleGmsGoogleServices = "4.4.4"
 firebaseDatabase = "22.0.1"
 firebaseAuthKtx = "24.0.1"
 mpandroidchart = "v3.1.0"
+firebaseAppCheck = "19.0.2"
 uiUnit = "1.10.6"
 uiGraphics = "1.10.6"
 appcompat = "1.7.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+firebase-appcheck-playintegrity = { group = "com.google.firebase", name = "firebase-appcheck-playintegrity", version.ref = "firebaseAppCheck" }
 androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleRuntimeKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
@@ -43,4 +45,3 @@ androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 google-gms-google-services = { id = "com.google.gms.google-services", version.ref = "googleGmsGoogleServices" }
-

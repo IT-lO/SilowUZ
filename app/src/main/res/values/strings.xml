@@ -30,5 +30,18 @@
     <string name="delete">Delete</string>
     <string name="start_training">Start Training</string>
     <string name="exercises">Exercises</string>
+    <string name="email" translatable="false">Email</string>
+    <string name="password">Password</string>
+    <string name="name">Username</string>
+    <string name="confirm_password">Confirm Pasword</string>
+    <string name="fill_all_fields">Fillout all fields</string>
+    <string name="invalid_email">Please provide a valid email address</string>
+    <string name="weak_password">Password: min. 8 characters, 1 capital letter and 1 number</string>
+    <string name="passwords_not_match">Passwords are not the same</string>
+    <string name="unknown_error">Uknown sign up error</string>
+    <string name="already_signed">Login instead</string>
+    <string name="register">Sign up</string>
+    <string name="signup">Sign up</string>
+    <string name="signin">Sign in</string>
     <string name="capital_steps">Steps</string>
 </resources>
