@@ -58,6 +58,8 @@ dependencies {
     implementation(libs.firebase.database)
     implementation(libs.firebase.auth)
     implementation(libs.androidx.compose.ui.unit)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.mpandroidchart)
     implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
     implementation(libs.androidx.appcompat)
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7")
