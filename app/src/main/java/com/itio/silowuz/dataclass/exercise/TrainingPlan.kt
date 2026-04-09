@@ -1,6 +1,8 @@
 package com.itio.silowuz.dataclass.exercise
 
 data class TrainingPlan(
-    val name: String,
-    val exerciseList: List<Exercise>,
+    val id: String = "",
+    val name: String = "",
+    val exerciseIds: List<String> = emptyList(),
+    val userId: String = ""
 )
