@@ -61,6 +61,7 @@ fun PlansScreen(
     var showMenu by remember { mutableStateOf(false) }
     var plansMode by remember { mutableStateOf(true) }
     var exerciseToEdit by remember { mutableStateOf<Exercise?>(null) }
+    var planToEdit by remember { mutableStateOf<TrainingPlan?>(null) }
 
     val addExerciseIcon : IconResource = IconResource.Drawable(R.drawable.add_exercise_ico)
     val addSeriesIcon : IconResource = IconResource.Drawable(R.drawable.add_series_ico)
@@ -121,7 +122,7 @@ fun PlansScreen(
                             Text(text = stringResource(R.string.create_plan))
                             Spacer(modifier = Modifier.width(8.dp))
                             SmallFloatingActionButton(
-                                onClick = {},
+                                onClick = { showPlanDialog = true },
                             ) {
                                 when(addSeriesIcon){
                                     is IconResource.Drawable -> {
@@ -158,14 +159,18 @@ fun PlansScreen(
                 }
             } else {
                 items(viewModel.plans) { plan ->
-                    // PlanCard musi teraz przyjąć listę IDs lub ViewModel musi mu dostarczyć pełne obiekty
-                    PlanCard(plan)
+                    PlanCard(
+                        trainingPlan = plan,
+                        allExercises = viewModel.exercises,
+                        onStartTraining = { /* logika startu */ },
+                        onEdit = { planToEdit = plan },
+                        onDelete = { viewModel.deletePlan(plan.id) }
+                    )
                 }
             }
         }
     }
 
-    // Dialog Ćwiczenia
     if (showExerciseDialog || exerciseToEdit != null) {
         ExerciseDialog(
             exercise = exerciseToEdit,
@@ -182,14 +187,22 @@ fun PlansScreen(
         )
     }
 
-    // Dialog Planu
-    if (showPlanDialog) {
+    if (showPlanDialog || planToEdit != null) {
         PlanDialog(
+            planToEdit = planToEdit,
             availableExercises = viewModel.exercises,
-            onDismissRequest = { showPlanDialog = false },
-            onSave = { name, selectedIds ->
-                viewModel.savePlan(name, selectedIds)
+            onDismissRequest = {
                 showPlanDialog = false
+                planToEdit = null
+            },
+            onSave = { name, selectedIds ->
+                if (planToEdit == null) {
+                    viewModel.savePlan(name, selectedIds)
+                } else {
+                    viewModel.updatePlan(planToEdit!!.copy(name = name, exerciseIds = selectedIds))
+                }
+                showPlanDialog = false
+                planToEdit = null
             }
         )
     }

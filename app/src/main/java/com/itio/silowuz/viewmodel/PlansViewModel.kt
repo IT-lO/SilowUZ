@@ -18,14 +18,12 @@ class PlansViewModel : ViewModel() {
     var plans by mutableStateOf<List<TrainingPlan>>(emptyList())
 
     init {
-        // Włączenie bazy lokalnej (Firestore robi to domyślnie na Androidzie)
         fetchData()
     }
 
     private fun fetchData() {
         if (userId.isEmpty()) return
 
-        // Słuchanie zmian w czasie rzeczywistym (działa offline!)
         db.collection("exercises")
             .whereEqualTo("userId", userId)
             .addSnapshotListener { snapshot, _ ->
@@ -57,5 +55,19 @@ class PlansViewModel : ViewModel() {
 
     fun deleteExercise(id: String) {
         db.collection("exercises").document(id).delete()
+    }
+
+    fun deletePlan(planId: String) {
+        if (planId.isEmpty()) return
+
+        db.collection("plans")
+            .document(planId)
+            .delete()
+            .addOnSuccessListener {}
+            .addOnFailureListener { e -> print(e.message)}
+    }
+
+    fun updatePlan(plan: TrainingPlan) {
+        db.collection("plans").document(plan.id).set(plan)
     }
 }
