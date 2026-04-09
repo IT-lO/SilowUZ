@@ -1,5 +1,7 @@
 package com.itio.silowuz.screen
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
@@ -19,6 +21,8 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -32,31 +36,43 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.components.AxisBase
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
-import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.formatter.ValueFormatter
 import com.itio.silowuz.R
 import com.itio.silowuz.ui.theme.SubTextGray
 import com.itio.silowuz.ui.theme.MainGreen
 import com.itio.silowuz.ui.theme.SecondaryGreen
 import com.itio.silowuz.ui.theme.White
+import com.itio.silowuz.viewmodel.HomeViewModel
 
-lateinit var barEntriesList: ArrayList<BarEntry>
 
 @Composable
-fun HomeScreen(paddingValues: PaddingValues) {
+fun HomeScreen(paddingValues: PaddingValues,
+               homeViewModel: HomeViewModel = viewModel()){
     val context = LocalContext.current
+    val uiState by homeViewModel.uiState.collectAsState()
+
+    // Requests permissions for tracking steps. After all permissions granted it starts tracking.
+    val permissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { result ->
+        if (result.values.all { it }) {
+            homeViewModel.startTrackingAfterPermission()
+        }
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
             .padding(paddingValues),
         contentAlignment = Alignment.TopCenter
-    ) {
-        Column {
+    ){
+        Column{
             // WELCOME
             Box(
                 modifier = Modifier
@@ -72,15 +88,15 @@ fun HomeScreen(paddingValues: PaddingValues) {
                     .fillMaxWidth()
                     .padding(horizontal = 15.dp, vertical = 10.dp),
                 contentAlignment = Alignment.TopStart
-            ) {
+            ){
                 Column {
                     Text(
-                        text = "Witaj, Użytkowniku!",
+                        text = stringResource(R.string.welcome) + ", ${uiState.userName}!",
                         color = White,
                         fontSize = 24.sp
                     )
                     Text(
-                        text = "niedziela, 29 marca 2026",
+                        text = uiState.dateString,
                         color = White,
                         fontSize = 14.sp
                     )
@@ -96,7 +112,7 @@ fun HomeScreen(paddingValues: PaddingValues) {
                     .fillMaxWidth()
                     .padding(horizontal = 15.dp, vertical = 10.dp),
                 contentAlignment = Alignment.TopStart
-            ) {
+            ){
                 Column {
                     Text(
                         text = stringResource(R.string.todays_steps),
@@ -109,15 +125,17 @@ fun HomeScreen(paddingValues: PaddingValues) {
                         modifier = Modifier
                             .fillMaxWidth(),
                         contentAlignment = Alignment.TopCenter
-                    ) {
-                        Column {
+                    ){
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ){
                             Text(
-                                text = "3000",
+                                text = "${uiState.steps}",
                                 color = MainGreen,
                                 fontSize = 48.sp
                             )
                             Text(
-                                text = "Cel: 10 000 kroków",
+                                text = "Cel: ${uiState.stepGoal} kroków",
                                 color = SubTextGray,
                                 fontSize = 12.sp
                             )
@@ -127,7 +145,7 @@ fun HomeScreen(paddingValues: PaddingValues) {
                     Spacer(modifier = Modifier.height(8.dp))
 
                     LinearProgressIndicator(
-                        progress = { 0.3f },
+                        progress = { uiState.steps.toFloat() / uiState.stepGoal.toFloat() },
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(8.dp)
@@ -141,14 +159,13 @@ fun HomeScreen(paddingValues: PaddingValues) {
 
                     Spacer(modifier = Modifier.height(8.dp))
 
-                    Row {
+                    Row{
                         OutlinedButton(
-                            onClick = { },
+                            onClick = { homeViewModel.addSteps() },
                             modifier = Modifier,
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = White,
-                                contentColor = MainGreen
-                            )
+                                contentColor = MainGreen)
                         ) {
                             Text(
                                 text = "+100 kroków (Test)"
@@ -158,16 +175,17 @@ fun HomeScreen(paddingValues: PaddingValues) {
                         Spacer(modifier = Modifier.width(8.dp))
 
                         Button(
-                            onClick = { },
+                            onClick = { homeViewModel.toggleTracking(onPermissionRequired = { permissions ->
+                                permissionLauncher.launch(permissions)
+                            }) },
                             modifier = Modifier
                                 .fillMaxWidth(),
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = MainGreen,
-                                contentColor = White
-                            )
+                                contentColor = White)
                         ) {
                             Text(
-                                text = stringResource(R.string.stop_tracking)
+                                text = if (uiState.isTracking)  stringResource(R.string.stop_tracking) else stringResource(R.string.start_tracking)
                             )
                         }
                     }
@@ -180,7 +198,7 @@ fun HomeScreen(paddingValues: PaddingValues) {
                     .padding(horizontal = 16.dp, vertical = 10.dp)
                     .fillMaxWidth(),
                 contentAlignment = Alignment.TopStart
-            ) {
+            ){
                 Column() {
                     Row() {
                         Box(
@@ -198,7 +216,7 @@ fun HomeScreen(paddingValues: PaddingValues) {
                         {
                             Column() {
                                 Text(
-                                    text = "120",
+                                    text = "${uiState.calories}",
                                     fontSize = 32.sp,
                                     fontWeight = FontWeight.Bold
 
@@ -228,7 +246,7 @@ fun HomeScreen(paddingValues: PaddingValues) {
                         {
                             Column() {
                                 Text(
-                                    text = "2.40",
+                                    text = "${uiState.distanceKm}",
                                     fontSize = 32.sp,
                                     fontWeight = FontWeight.Bold
 
@@ -260,7 +278,7 @@ fun HomeScreen(paddingValues: PaddingValues) {
                         {
                             Column() {
                                 Text(
-                                    text = "7",
+                                    text = "${uiState.streakDays}",
                                     fontSize = 32.sp,
                                     fontWeight = FontWeight.Bold
 
@@ -290,7 +308,7 @@ fun HomeScreen(paddingValues: PaddingValues) {
                         {
                             Column() {
                                 Text(
-                                    text = "45",
+                                    text = "${uiState.activeMinutes}",
                                     fontSize = 32.sp,
                                     fontWeight = FontWeight.Bold
 
@@ -315,14 +333,13 @@ fun HomeScreen(paddingValues: PaddingValues) {
                     .fillMaxWidth()
                     .padding(horizontal = 15.dp, vertical = 10.dp),
                 contentAlignment = Alignment.TopStart
-            ) {
+            ){
                 Column() {
                     Text(
                         text = stringResource(R.string.weekly_progress),
                         fontSize = 16.sp
                     )
 
-                    StepsBarChartData()
                     AndroidView(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -331,7 +348,7 @@ fun HomeScreen(paddingValues: PaddingValues) {
                             BarChart(context).apply {
                                 val labels = listOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
 
-                                val dataSet = BarDataSet(barEntriesList, "").apply {
+                                val dataSet = BarDataSet(uiState.barEntries, "").apply {
                                     color = MainGreen.toArgb()
                                     valueTextColor = MainGreen.toArgb()
                                     valueTextSize = 12f
@@ -350,10 +367,7 @@ fun HomeScreen(paddingValues: PaddingValues) {
                                     isGranularityEnabled = true
 
                                     valueFormatter = object : ValueFormatter() {
-                                        override fun getAxisLabel(
-                                            value: Float,
-                                            axis: AxisBase?
-                                        ): String {
+                                        override fun getAxisLabel(value: Float, axis: AxisBase?): String {
                                             return labels.getOrNull(value.toInt()) ?: ""
                                         }
                                     }
@@ -367,15 +381,3 @@ fun HomeScreen(paddingValues: PaddingValues) {
         }
     }
 }
-
-fun StepsBarChartData() {
-    barEntriesList = ArrayList()
-    barEntriesList.add(BarEntry(0f, 100f))
-    barEntriesList.add(BarEntry(1f, 200f))
-    barEntriesList.add(BarEntry(2f, 300f))
-    barEntriesList.add(BarEntry(3f, 400f))
-    barEntriesList.add(BarEntry(4f, 500f))
-    barEntriesList.add(BarEntry(5f, 600f))
-    barEntriesList.add(BarEntry(6f, 700f))
-}
-
