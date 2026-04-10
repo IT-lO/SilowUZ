@@ -44,4 +44,6 @@
     <string name="signup">Sign up</string>
     <string name="signin">Sign in</string>
     <string name="capital_steps">Steps</string>
+    <string name="map">Map</string>
+    <string name="gym">Gym</string>
 </resources>

@@ -42,4 +42,6 @@
     <string name="signup">Zarejestruj się</string>
     <string name="signin">Zaloguj się</string>
     <string name="capital_steps">Kroki</string>
+    <string name="map">Mapa</string>
+    <string name="gym">Siłownia</string>
 </resources>
