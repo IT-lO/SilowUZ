@@ -26,9 +26,9 @@ import com.google.firebase.appcheck.FirebaseAppCheck
 import com.google.firebase.appcheck.playintegrity.PlayIntegrityAppCheckProviderFactory
 import com.google.firebase.initialize
 import com.itio.silowuz.`interface`.IconResource
-import com.itio.silowuz.screen.ExerciseScreen
 import com.itio.silowuz.screen.HomeScreen
 import com.itio.silowuz.screen.LoginScreen
+import com.itio.silowuz.screen.PlansScreen
 import com.itio.silowuz.screen.ProfileScreen
 import com.itio.silowuz.screen.RegisterScreen
 import com.itio.silowuz.ui.theme.SilowUZTheme
@@ -120,7 +120,7 @@ fun SilowUZApp(onLogout: () -> Unit) {
         Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
             when (currentDestination) {
                 AppDestinations.HOME -> HomeScreen(innerPadding)
-                AppDestinations.PLANS -> ExerciseScreen(innerPadding)
+                AppDestinations.PLANS -> PlansScreen(innerPadding)
                 AppDestinations.PROFILE -> ProfileScreen(innerPadding, onLogout)
             }
         }

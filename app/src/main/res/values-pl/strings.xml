@@ -42,4 +42,10 @@
     <string name="signup">Zarejestruj się</string>
     <string name="signin">Zaloguj się</string>
     <string name="capital_steps">Kroki</string>
+    <string name="plan_name">Nazwa planu</string>
+    <string name="new_plan">Nowy plan</string>
+    <string name="edit_plan">Edytuj plan</string>
+    <string name="add_exercise_to_plan">Dodaj ćwiczenie do planu</string>
+    <string name="choose_exercise">Wybierz ćwiczenie</string>
+    <string name="no_more_exercises">Brak ćwiczeń</string>
 </resources>

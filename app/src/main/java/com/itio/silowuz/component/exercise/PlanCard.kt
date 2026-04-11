@@ -22,17 +22,25 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.itio.silowuz.R
+import com.itio.silowuz.dataclass.exercise.Exercise
 import com.itio.silowuz.dataclass.exercise.TrainingPlan
 import com.itio.silowuz.ui.theme.MainGreen
 import com.itio.silowuz.ui.theme.SecondaryGreen
 import com.itio.silowuz.ui.theme.White
-
 @Composable
 fun PlanCard(
     trainingPlan: TrainingPlan,
-    // TODO add delegate function for plan removal
+    allExercises: List<Exercise>,
+    onStartTraining: () -> Unit,
+    onEdit: () -> Unit,
+    onDelete: () -> Unit
 ) {
+    val exercisesInPlan = trainingPlan.exerciseIds.mapNotNull { id ->
+        allExercises.find { it.id == id }
+    }
+
     Column(
         modifier = Modifier
             .padding(16.dp)
@@ -50,7 +58,7 @@ fun PlanCard(
         )
         Spacer(modifier = Modifier.height(16.dp))
 
-        trainingPlan.exerciseList.forEach { exercise ->
+        exercisesInPlan.forEach { exercise ->
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -68,74 +76,44 @@ fun PlanCard(
             HorizontalDivider(color = SecondaryGreen)
             Spacer(modifier = Modifier.height(8.dp))
         }
-        Row(
-            modifier = Modifier
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(4.dp)
-        ) {
+
+        Row(modifier = Modifier.fillMaxWidth()) {
             Box(
                 modifier = Modifier
                     .weight(1f)
-                    .clickable(
-                        enabled = true,
-                        onClick = {}
-                    )
                     .clip(shape = RoundedCornerShape(7.dp))
                     .background(color = MainGreen)
+                    .clickable { onStartTraining() }
                     .height(height = 48.dp),
                 contentAlignment = Alignment.Center
             ) {
                 Text(text = stringResource(R.string.start_training), color = White)
             }
         }
+
         Spacer(modifier = Modifier.height(8.dp))
+
         Row(
-            modifier = Modifier
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(4.dp)
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .clickable(
-                        enabled = true,
-                        onClick = {}
-                    )
-                    .clip(shape = RoundedCornerShape(7.dp))
-                    .background(color = MainGreen)
-                    .height(height = 32.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(text = "B", color = White)
-            }
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .clickable(
-                        enabled = true,
-                        onClick = {}
-                    )
-                    .clip(shape = RoundedCornerShape(7.dp))
-                    .background(color = MainGreen)
-                    .height(height = 32.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(text = "E", color = White)
-            }
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .clickable(
-                        enabled = true,
-                        onClick = {}
-                    )
-                    .clip(shape = RoundedCornerShape(7.dp))
-                    .background(color = MainGreen)
-                    .height(height = 32.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(text = "U", color = White)
-            }
+            ActionButton(text = "B", modifier = Modifier.weight(1f)) { /* TODO bluetooth */ }
+            ActionButton(text = "E", modifier = Modifier.weight(1f)) { onEdit() }
+            ActionButton(text = "U", modifier = Modifier.weight(1f)) { onDelete() }
         }
+    }
+}
+
+@Composable
+fun ActionButton(text: String, modifier: Modifier = Modifier, onClick: () -> Unit) {
+    Box(
+        modifier = modifier
+            .clip(shape = RoundedCornerShape(7.dp))
+            .background(color = MainGreen)
+            .clickable { onClick() }
+            .height(height = 32.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(text = text, color = White, fontSize = 12.sp)
     }
 }
