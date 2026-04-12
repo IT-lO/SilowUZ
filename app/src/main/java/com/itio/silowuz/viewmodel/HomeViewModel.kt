@@ -61,7 +61,7 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
         Test function to add 100 steps to today's total.
      */
     fun addSteps() {
-        stepRepository.updateSteps(stepRepository.getTodaySteps() + 100)
+        stepRepository.updateSteps(getApplication(), stepRepository.getTodaySteps() + 100)
         _uiState.update {
             val newSteps = it.steps + 100
             it.copy(steps = newSteps,

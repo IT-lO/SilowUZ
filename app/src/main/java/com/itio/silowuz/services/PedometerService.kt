@@ -66,7 +66,7 @@ class PedometerService : Service(), SensorEventListener {
     override fun onSensorChanged(event: SensorEvent?) {
         if (event?.sensor?.type == Sensor.TYPE_STEP_COUNTER) {
             val totalStepsSinceReboot = event.values[0].toInt()
-            stepRepository.updateSteps(totalStepsSinceReboot)
+            stepRepository.updateSteps(this, totalStepsSinceReboot)
 
             val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.notify(NOTIFICATION_ID, createNotification(stepRepository.getTodaySteps()))

@@ -160,20 +160,6 @@ fun HomeScreen(paddingValues: PaddingValues,
                     Spacer(modifier = Modifier.height(8.dp))
 
                     Row{
-                        OutlinedButton(
-                            onClick = { homeViewModel.addSteps() },
-                            modifier = Modifier,
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = White,
-                                contentColor = MainGreen)
-                        ) {
-                            Text(
-                                text = "+100 kroków (Test)"
-                            )
-                        }
-
-                        Spacer(modifier = Modifier.width(8.dp))
-
                         Button(
                             onClick = { homeViewModel.toggleTracking(onPermissionRequired = { permissions ->
                                 permissionLauncher.launch(permissions)

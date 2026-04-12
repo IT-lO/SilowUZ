@@ -63,6 +63,7 @@ dependencies {
     implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
     implementation(libs.androidx.appcompat)
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7")
+    implementation(libs.androidx.glance.appwidget)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.compose.runtime)
     implementation(libs.firebase.firestore)
