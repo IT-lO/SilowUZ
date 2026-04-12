@@ -44,6 +44,12 @@
     <string name="signup">Sign up</string>
     <string name="signin">Sign in</string>
     <string name="capital_steps">Steps</string>
+    <string name="plan_name">Plan name</string>
+    <string name="new_plan">New plan</string>
+    <string name="edit_plan">Edit plan</string>
+    <string name="add_exercise_to_plan">Add exercise to plan</string>
+    <string name="choose_exercise">Choose exercise</string>
+    <string name="no_more_exercises">No more exercises</string>
     <string name="map">Map</string>
     <string name="gym">Gym</string>
 </resources>

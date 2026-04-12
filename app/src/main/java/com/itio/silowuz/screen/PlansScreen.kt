@@ -38,24 +38,30 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.itio.silowuz.R
 import com.itio.silowuz.component.exercise.ExerciseCard
 import com.itio.silowuz.component.exercise.ModeSwitch
 import com.itio.silowuz.component.exercise.PlanCard
 import com.itio.silowuz.component.exercise.ExerciseDialog
+import com.itio.silowuz.component.exercise.PlanDialog
 import com.itio.silowuz.dataclass.exercise.Exercise
 import com.itio.silowuz.dataclass.exercise.TrainingPlan
 import com.itio.silowuz.`interface`.IconResource
+import com.itio.silowuz.viewmodel.PlansViewModel
 
 @Composable
-fun ExerciseScreen(paddingValues: PaddingValues){
+fun PlansScreen(
+    paddingValues: PaddingValues,
+    viewModel: PlansViewModel = viewModel()
+){
 
     var showExerciseDialog by remember { mutableStateOf(false) }
-    var exerciseList by remember { mutableStateOf(listOf<Exercise>()) }
+    var showPlanDialog by remember { mutableStateOf(false) }
     var showMenu by remember { mutableStateOf(false) }
     var plansMode by remember { mutableStateOf(true) }
     var exerciseToEdit by remember { mutableStateOf<Exercise?>(null) }
-    var plan = TrainingPlan(name = "Plan", exerciseList = exerciseList)
+    var planToEdit by remember { mutableStateOf<TrainingPlan?>(null) }
 
     val addExerciseIcon : IconResource = IconResource.Drawable(R.drawable.add_exercise_ico)
     val addSeriesIcon : IconResource = IconResource.Drawable(R.drawable.add_series_ico)
@@ -116,7 +122,7 @@ fun ExerciseScreen(paddingValues: PaddingValues){
                             Text(text = stringResource(R.string.create_plan))
                             Spacer(modifier = Modifier.width(8.dp))
                             SmallFloatingActionButton(
-                                onClick = {},
+                                onClick = { showPlanDialog = true },
                             ) {
                                 when(addSeriesIcon){
                                     is IconResource.Drawable -> {
@@ -141,58 +147,63 @@ fun ExerciseScreen(paddingValues: PaddingValues){
                 }
             }
         }
-    ) { paddingValues ->
-        LazyColumn(
-            modifier = Modifier
-                .padding(paddingValues),
-            contentPadding = PaddingValues(bottom = 80.dp)
-        ){
+    ) { innerPadding ->
+        LazyColumn(modifier = Modifier.padding(innerPadding)) {
             if (!plansMode) {
-                items(exerciseList) { exercise ->
+                items(viewModel.exercises) { exercise ->
                     ExerciseCard(
                         exercise = exercise,
-                        onEdit = {exerciseToEdit = exercise},
-                        onDelete = { exerciseList = exerciseList - exercise }
+                        onEdit = { exerciseToEdit = exercise },
+                        onDelete = { viewModel.deleteExercise(exercise.id) }
                     )
                 }
             } else {
-                if(!exerciseList.isEmpty()){
-                    item {
-                        PlanCard(plan)
-                    }
+                items(viewModel.plans) { plan ->
+                    PlanCard(
+                        trainingPlan = plan,
+                        allExercises = viewModel.exercises,
+                        onStartTraining = { /* logika startu */ },
+                        onEdit = { planToEdit = plan },
+                        onDelete = { viewModel.deletePlan(plan.id) }
+                    )
                 }
             }
         }
     }
 
-    if(showExerciseDialog){
+    if (showExerciseDialog || exerciseToEdit != null) {
         ExerciseDialog(
+            exercise = exerciseToEdit,
             onDismissRequest = {
                 showExerciseDialog = false
+                exerciseToEdit = null
             },
-            onSave = { name, repsValue, setsValue, weightValue, durationValue ->
-                exerciseList = exerciseList + Exercise(name, repsValue, setsValue, weightValue, durationValue)
+            onSave = { name, reps, sets, weight, duration ->
+                viewModel.saveExercise(Exercise(exerciseToEdit?.id ?: "", name, reps, sets, weight, duration))
                 showExerciseDialog = false
+                exerciseToEdit = null
             },
             paddingValues = paddingValues
         )
     }
 
-    exerciseToEdit?.let { exercise ->
-        ExerciseDialog(
-            exercise = exercise,
+    if (showPlanDialog || planToEdit != null) {
+        PlanDialog(
+            planToEdit = planToEdit,
+            availableExercises = viewModel.exercises,
             onDismissRequest = {
-                exerciseToEdit = null
+                showPlanDialog = false
+                planToEdit = null
             },
-            onSave = { name, reps, sets, weight, duration ->
-                val updatedExercise = Exercise(name, reps, sets, weight, duration)
-
-                exerciseList = exerciseList.map {
-                    if (it == exercise) updatedExercise else it
+            onSave = { name, selectedIds ->
+                if (planToEdit == null) {
+                    viewModel.savePlan(name, selectedIds)
+                } else {
+                    viewModel.updatePlan(planToEdit!!.copy(name = name, exerciseIds = selectedIds))
                 }
-                exerciseToEdit = null
-            },
-            paddingValues = paddingValues
+                showPlanDialog = false
+                planToEdit = null
+            }
         )
     }
 }

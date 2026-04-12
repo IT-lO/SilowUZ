@@ -98,7 +98,11 @@ fun ExerciseDialog(
             ) {
                 OutlinedTextField(
                     value = defaultReps,
-                    onValueChange = { defaultReps = it },
+                    onValueChange = { newValue ->
+                        if (newValue.all { it.isDigit() }) {
+                            defaultReps = newValue
+                        }
+                    },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
                     label = { Text(text = stringResource(R.string.exercise_reps)) },
                     modifier = Modifier.weight(1f),
@@ -107,7 +111,11 @@ fun ExerciseDialog(
 
                 OutlinedTextField(
                     value = defaultSets,
-                    onValueChange = { defaultSets = it },
+                    onValueChange = { newValue ->
+                        if (newValue.all { it.isDigit() }) {
+                            defaultSets = newValue
+                        }
+                    },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
                     label = { Text(text = stringResource(R.string.exercise_sets)) },
                     modifier = Modifier.weight(1f),
@@ -121,7 +129,23 @@ fun ExerciseDialog(
             ) {
                 OutlinedTextField(
                     value = defaultWeight,
-                    onValueChange = { defaultWeight = it },
+                    onValueChange = { input ->
+                        val normalizedInput = input.replace(',', '.')
+
+                        val isDouble = normalizedInput.count { it == '.' } <= 1 &&
+                                normalizedInput.all { it.isDigit() || it == '.' }
+
+                        if (isDouble) {
+                            if (normalizedInput.contains(".")) {
+                                val afterDot = normalizedInput.substringAfter(".")
+                                if (afterDot.length <= 2) {
+                                    defaultWeight = normalizedInput
+                                }
+                            } else {
+                                defaultWeight = normalizedInput
+                            }
+                        }
+                    },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     label = { Text(text = stringResource(R.string.exercise_weight)) },
                     modifier = Modifier.weight(1f),
@@ -130,12 +154,17 @@ fun ExerciseDialog(
 
                 OutlinedTextField(
                     value = defaultDuration,
-                    onValueChange = { defaultDuration = it },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
+                    onValueChange = { newValue ->
+                        if (newValue.all { it.isDigit() }) {
+                            defaultDuration = newValue
+                        }
+                    },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     label = { Text(text = stringResource(R.string.exercise_duration)) },
                     modifier = Modifier.weight(1f),
                     singleLine = true
                 )
+
             }
 
             Spacer(modifier = Modifier.height(8.dp))
