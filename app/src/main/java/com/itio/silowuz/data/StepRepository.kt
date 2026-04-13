@@ -16,7 +16,7 @@ import kotlinx.coroutines.launch
     Repository used by PedometerService to update steps taken by the user when tracking is enabled.
     Uses SharedPreferences to store data and singleton pattern to ensure only one instance of the repository.
  */
-class StepRepository private constructor(context: Context) {
+class StepRepository private constructor(context: Context, private val pedometerFirebaseRepository: PedometerFirebaseRepository) {
     private val prefs: SharedPreferences = context.getSharedPreferences("pedometer_prefs", Context.MODE_PRIVATE)
 
     private val repositoryScope = CoroutineScope(Dispatchers.Default + SupervisorJob())
@@ -49,9 +49,13 @@ class StepRepository private constructor(context: Context) {
         val lastDate = prefs.getString("last_date", "")
         val lastStepsSensorValue = prefs.getInt("last_steps_sensor_value", -1)
 
-        // Sets steps to 0 on new day. Else if last_steps_sensor_value was set it calculates steps
-        // taken since last reading. Every 25 steps updates widget.
+        // Saves steps to firebase repo & sets steps to 0 on new day. Else if last_steps_sensor_value
+        // was set it calculates steps taken since last reading. Every 25 steps updates widget.
         if (today != lastDate) {
+            if (!lastDate.isNullOrEmpty()){
+                pedometerFirebaseRepository.saveDailySteps(_stepsToday.value, lastDate)
+            }
+
             _stepsToday.value = 0
             prefs.edit {
                 putString("last_date", today)
@@ -90,7 +94,7 @@ class StepRepository private constructor(context: Context) {
 
         fun getInstance(context: Context): StepRepository {
             return INSTANCE ?: synchronized(this) {
-                INSTANCE ?: StepRepository(context.applicationContext).also { INSTANCE = it }
+                INSTANCE ?: StepRepository(context.applicationContext, PedometerFirebaseRepository()).also { INSTANCE = it }
             }
         }
     }

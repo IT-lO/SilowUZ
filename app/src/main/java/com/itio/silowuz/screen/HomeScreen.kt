@@ -160,6 +160,21 @@ fun HomeScreen(paddingValues: PaddingValues,
                     Spacer(modifier = Modifier.height(8.dp))
 
                     Row{
+                        OutlinedButton(
+                            onClick = { homeViewModel.saveDailySteps(uiState.steps) },
+                            modifier = Modifier,
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = White,
+                                contentColor = MainGreen)
+                        ) {
+                            Text(
+                                text = "Save Steps (Test)"
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.width(8.dp))
+
+
                         Button(
                             onClick = { homeViewModel.toggleTracking(onPermissionRequired = { permissions ->
                                 permissionLauncher.launch(permissions)
@@ -351,6 +366,7 @@ fun HomeScreen(paddingValues: PaddingValues,
                                     setDrawGridLines(false)
                                     granularity = 1f
                                     isGranularityEnabled = true
+                                    textColor = MainGreen.toArgb()
 
                                     valueFormatter = object : ValueFormatter() {
                                         override fun getAxisLabel(value: Float, axis: AxisBase?): String {
@@ -358,8 +374,24 @@ fun HomeScreen(paddingValues: PaddingValues,
                                         }
                                     }
                                 }
+
+                                axisLeft.apply {
+                                    textColor = MainGreen.toArgb()
+                                }
                                 invalidate()
                             }
+                        },
+                        update = { chart ->
+                            val dataSet = BarDataSet(uiState.barEntries, "").apply {
+                                color = MainGreen.toArgb()
+                                valueTextColor = MainGreen.toArgb()
+                                valueTextSize = 12f
+                            }
+
+                            chart.data = BarData(dataSet)
+
+                            chart.notifyDataSetChanged()
+                            chart.invalidate()
                         }
                     )
                 }
