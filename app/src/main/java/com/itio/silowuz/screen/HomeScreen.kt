@@ -18,7 +18,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -160,21 +159,6 @@ fun HomeScreen(paddingValues: PaddingValues,
                     Spacer(modifier = Modifier.height(8.dp))
 
                     Row{
-                        OutlinedButton(
-                            onClick = { homeViewModel.saveDailySteps(uiState.steps) },
-                            modifier = Modifier,
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = White,
-                                contentColor = MainGreen)
-                        ) {
-                            Text(
-                                text = "Save Steps (Test)"
-                            )
-                        }
-
-                        Spacer(modifier = Modifier.width(8.dp))
-
-
                         Button(
                             onClick = { homeViewModel.toggleTracking(onPermissionRequired = { permissions ->
                                 permissionLauncher.launch(permissions)

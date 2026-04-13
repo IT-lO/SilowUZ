@@ -175,13 +175,4 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
 
         return barEntriesList
     }
-
-    /*
-        Test function used for debugging. Delete this and the test button from UI before merging.
-     */
-    fun saveDailySteps(stepCount: Int) {
-        val day = LocalDate.now().toString()
-//        val day = LocalDate.of(2026,4,14).toString()
-        pedometerFirebaseRepository.saveDailySteps(stepCount, day)
-    }
 }
