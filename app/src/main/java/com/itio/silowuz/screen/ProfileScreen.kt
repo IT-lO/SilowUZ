@@ -26,7 +26,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.os.LocaleListCompat
 import com.itio.silowuz.R
@@ -62,7 +61,8 @@ fun ProfileScreen(paddingValues: PaddingValues, onLogout: () -> Unit){
             )
         }
         Spacer(modifier = Modifier.weight(1f))
-        Text(text = stringResource(R.string.profile_screen))
+        Text(text = stringResource(R.string.where_to_start))
+        Text(text = stringResource(R.string.check_nearest_gym))
         IconButton(
             onClick = {
                 findNearestGym(context)
