@@ -48,4 +48,8 @@
     <string name="add_exercise_to_plan">Dodaj ćwiczenie do planu</string>
     <string name="choose_exercise">Wybierz ćwiczenie</string>
     <string name="no_more_exercises">Brak ćwiczeń</string>
+    <string name="map">Mapa</string>
+    <string name="gym">Siłownia</string>
+    <string name="where_to_start">Nie wiesz gdzie trenować?</string>
+    <string name="check_nearest_gym">Sprawdź pobliskie siłownie!</string>
 </resources>

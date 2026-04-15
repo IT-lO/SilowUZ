@@ -65,6 +65,7 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7")
     implementation(libs.androidx.glance.appwidget)
     implementation(libs.androidx.ui.graphics)
+    implementation("org.osmdroid:osmdroid-android:6.1.18")
     implementation(libs.androidx.compose.runtime)
     implementation(libs.firebase.firestore)
     testImplementation(libs.junit)
