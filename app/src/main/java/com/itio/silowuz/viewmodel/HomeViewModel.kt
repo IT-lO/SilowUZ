@@ -5,11 +5,14 @@ import android.app.Application
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
+import androidx.compose.runtime.snapshotFlow
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.mikephil.charting.data.BarEntry
+import com.itio.silowuz.data.PedometerFirebaseRepository
 import com.itio.silowuz.data.StepRepository
+import com.itio.silowuz.dataclass.home.DailySteps
 import com.itio.silowuz.dataclass.home.HomeUiState
 import com.itio.silowuz.services.PedometerService
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,6 +28,7 @@ import kotlin.math.roundToInt
 class HomeViewModel(application: Application) : AndroidViewModel(application) {
 
     private val stepRepository = StepRepository.getInstance(application)
+    private val pedometerFirebaseRepository = PedometerFirebaseRepository()
     private val _uiState = MutableStateFlow(HomeUiState(
         userName = getUserName(),
         dateString = getCurrentDate(),
@@ -35,13 +39,13 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
         streakDays = getActivityStreak(),
         activeMinutes = getActivityMinutes(),
         isTracking = false,
-        barEntries = getWeeklySteps()
+        barEntries = emptyList()
     ))
     val uiState = _uiState.asStateFlow()
 
     /*
-        When ViewModel launches it creates a listener for stepsToday in StepRepository.
-        Whenever stepsToday update, it updates the uiState with new values.
+        When ViewModel launches it creates listeners to data from repositories.
+        Whenever this data changes it updates the UI state.
      */
     init {
         viewModelScope.launch {
@@ -55,18 +59,14 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
                 }
             }
         }
-    }
-
-    /*
-        Test function to add 100 steps to today's total.
-     */
-    fun addSteps() {
-        stepRepository.updateSteps(getApplication(), stepRepository.getTodaySteps() + 100)
-        _uiState.update {
-            val newSteps = it.steps + 100
-            it.copy(steps = newSteps,
-                calories = calculateCaloriesBurned(newSteps),
-                distanceKm = calculateTraversedDistanceKm(newSteps))
+        viewModelScope.launch {
+            snapshotFlow { pedometerFirebaseRepository.weeklySteps }.collect { weeklyList ->
+                _uiState.update { currentState ->
+                    currentState.copy(
+                        barEntries = convertWeeklyStepsToBarEntries(weeklyList)
+                    )
+                }
+            }
         }
     }
 
@@ -156,15 +156,23 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
         return 45
     }
 
-    fun getWeeklySteps(): List<BarEntry>{
+    /*
+        Converts the weekly steps from PedometerFirebaseRepository to BarEntries for the chart
+        used in HomeScreen.
+     */
+    fun convertWeeklyStepsToBarEntries(weeklySteps: List<DailySteps>): List<BarEntry>{
         val barEntriesList = ArrayList<BarEntry>()
-        barEntriesList.add(BarEntry(0f, 100f))
-        barEntriesList.add(BarEntry(1f, 200f))
-        barEntriesList.add(BarEntry(2f, 300f))
-        barEntriesList.add(BarEntry(3f, 400f))
-        barEntriesList.add(BarEntry(4f, 500f))
-        barEntriesList.add(BarEntry(5f, 600f))
-        barEntriesList.add(BarEntry(6f, 700f))
+
+        val stepsMap = weeklySteps.associate {
+            val date = LocalDate.parse(it.day)
+            date.dayOfWeek.value to it.stepCount.toFloat()
+        }
+
+        for (i in 1..7) {
+            val steps = stepsMap[i] ?: 0f
+            barEntriesList.add(BarEntry((i - 1).toFloat(), steps))
+        }
+
         return barEntriesList
     }
 }

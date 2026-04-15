@@ -18,7 +18,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -351,6 +350,7 @@ fun HomeScreen(paddingValues: PaddingValues,
                                     setDrawGridLines(false)
                                     granularity = 1f
                                     isGranularityEnabled = true
+                                    textColor = MainGreen.toArgb()
 
                                     valueFormatter = object : ValueFormatter() {
                                         override fun getAxisLabel(value: Float, axis: AxisBase?): String {
@@ -358,8 +358,24 @@ fun HomeScreen(paddingValues: PaddingValues,
                                         }
                                     }
                                 }
+
+                                axisLeft.apply {
+                                    textColor = MainGreen.toArgb()
+                                }
                                 invalidate()
                             }
+                        },
+                        update = { chart ->
+                            val dataSet = BarDataSet(uiState.barEntries, "").apply {
+                                color = MainGreen.toArgb()
+                                valueTextColor = MainGreen.toArgb()
+                                valueTextSize = 12f
+                            }
+
+                            chart.data = BarData(dataSet)
+
+                            chart.notifyDataSetChanged()
+                            chart.invalidate()
                         }
                     )
                 }
