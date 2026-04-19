@@ -1,11 +1,20 @@
 package com.itio.silowuz.screen
 
+import android.Manifest
+import android.bluetooth.BluetoothAdapter
+import android.content.pm.PackageManager
+import android.os.Build
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresPermission
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -22,11 +31,15 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
@@ -35,11 +48,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.itio.silowuz.R
+import com.itio.silowuz.component.exercise.BluetoothSocket
 import com.itio.silowuz.component.exercise.ExerciseCard
 import com.itio.silowuz.component.exercise.ModeSwitch
 import com.itio.silowuz.component.exercise.PlanCard
@@ -50,6 +66,7 @@ import com.itio.silowuz.dataclass.exercise.TrainingPlan
 import com.itio.silowuz.`interface`.IconResource
 import com.itio.silowuz.viewmodel.PlansViewModel
 
+@RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
 @Composable
 fun PlansScreen(
     paddingValues: PaddingValues,
@@ -66,6 +83,49 @@ fun PlansScreen(
     val addExerciseIcon : IconResource = IconResource.Drawable(R.drawable.add_exercise_ico)
     val addSeriesIcon : IconResource = IconResource.Drawable(R.drawable.add_series_ico)
     val iconRotation by animateFloatAsState(targetValue = if (showMenu) 45f else 0f)
+    val context = LocalContext.current
+    val bluetoothAdapter: BluetoothAdapter? = remember { BluetoothAdapter.getDefaultAdapter() }
+    val launcher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        if (permissions[Manifest.permission.BLUETOOTH_CONNECT] == true) {
+            Toast.makeText(context, "Uprawnienia przyznane, spróbuj ponownie", Toast.LENGTH_SHORT).show()
+        }
+    }
+    val checkAndRunBluetooth = { action: () -> Unit ->
+        val permissions = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            arrayOf(
+                Manifest.permission.BLUETOOTH_SCAN,
+                Manifest.permission.BLUETOOTH_ADVERTISE,
+                Manifest.permission.BLUETOOTH_CONNECT
+            )
+        } else {
+            arrayOf(
+                Manifest.permission.BLUETOOTH,
+                Manifest.permission.BLUETOOTH_ADMIN,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            )
+        }
+
+        val allGranted = permissions.all {
+            ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED
+        }
+
+        if (allGranted) {
+            action()
+        } else {
+            launcher.launch(permissions)
+        }
+    }
+    var showBluetoothImportDialog by remember { mutableStateOf(false) }
+    val pairedDevices = remember(showBluetoothImportDialog) {
+        if (showBluetoothImportDialog) {
+            bluetoothAdapter?.bondedDevices?.map { it } ?: emptyList()
+        } else {
+            emptyList()
+        }
+    }
+
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -100,7 +160,22 @@ fun PlansScreen(
                             .padding(bottom = 16.dp)
 
 
-                    ) {
+                    ){
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text(text = stringResource(R.string.import_))
+                            Spacer(modifier = Modifier.width(8.dp))
+                            SmallFloatingActionButton(
+                                onClick = {
+                                    showBluetoothImportDialog = true
+                                    showMenu = false
+                                },
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.ArrowBack,
+                                    contentDescription = stringResource(R.string.import_)
+                                )
+                            }
+                        }
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Text(text = stringResource(R.string.create_exercise))
                             Spacer(modifier = Modifier.width(8.dp))
@@ -164,13 +239,61 @@ fun PlansScreen(
                         allExercises = viewModel.exercises,
                         onStartTraining = { /* logika startu */ },
                         onEdit = { planToEdit = plan },
-                        onDelete = { viewModel.deletePlan(plan.id) }
+                        onDelete = { viewModel.deletePlan(plan.id) },
+                        onExport = {
+                            checkAndRunBluetooth {
+                                val discoverableIntent = android.content.Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE).apply {
+                                    putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300)
+                                }
+                                context.startActivity(discoverableIntent)
+
+                                val json = viewModel.exportPlan(plan)
+                                bluetoothAdapter?.let { adapter ->
+                                    BluetoothSocket.startServerAndSend(adapter, json)
+                                    Toast.makeText(context, "Czekam na połączenie...", Toast.LENGTH_LONG).show()
+                                }
+                            }
+                        }
                     )
                 }
             }
+
         }
     }
-
+    if (showBluetoothImportDialog) {
+        AlertDialog(
+            onDismissRequest = { showBluetoothImportDialog = false },
+            title = { Text("Wybierz urządzenie do odbioru") },
+            text = {
+                if (pairedDevices.isEmpty()) {
+                    Text("Brak sparowanych urządzeń. Sparuj telefony w systemie.")
+                } else {
+                    LazyColumn {
+                        items(pairedDevices) { device ->
+                            Text(
+                                text = device.name ?: "Nieznane urządzenie",
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable {
+                                        BluetoothSocket.connectAndReceive(device) { receivedJson ->
+                                            viewModel.importPlanFromJson(receivedJson)
+                                        }
+                                        showBluetoothImportDialog = false
+                                    }
+                                    .padding(16.dp)
+                            )
+                            HorizontalDivider()
+                        }
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = { showBluetoothImportDialog = false }) {
+                    Text("Zamknij")
+                }
+            }
+        )
+    }
     if (showExerciseDialog || exerciseToEdit != null) {
         ExerciseDialog(
             exercise = exerciseToEdit,

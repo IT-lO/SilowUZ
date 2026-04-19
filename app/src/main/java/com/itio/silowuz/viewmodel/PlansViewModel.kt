@@ -8,7 +8,10 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.firestore
 import com.itio.silowuz.dataclass.exercise.Exercise
+import com.itio.silowuz.dataclass.exercise.ExportPackage
 import com.itio.silowuz.dataclass.exercise.TrainingPlan
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 class PlansViewModel : ViewModel() {
     private val db = Firebase.firestore
     private val auth = FirebaseAuth.getInstance()
@@ -69,5 +72,34 @@ class PlansViewModel : ViewModel() {
 
     fun updatePlan(plan: TrainingPlan) {
         db.collection("plans").document(plan.id).set(plan)
+    }
+
+    fun exportPlan(plan: TrainingPlan): String {
+        val exercisesToExport = exercises.filter { plan.exerciseIds.contains(it.id) }
+
+        val exportPackage = ExportPackage(
+            planName = plan.name,
+            trainingPlan = plan,
+            associatedExercises = exercisesToExport
+        )
+
+        return Json.encodeToString(exportPackage)
+    }
+
+    fun importPlanFromJson(jsonString: String) {
+        try {
+            val importedData = Json.decodeFromString<ExportPackage>(jsonString)
+
+            importedData.associatedExercises.forEach { exercise ->
+                if (!exercises.any { it.id == exercise.id }) {
+                    saveExercise(exercise)
+                }
+            }
+
+            savePlan(importedData.trainingPlan.name, importedData.trainingPlan.exerciseIds)
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 }
