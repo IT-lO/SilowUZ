@@ -52,4 +52,15 @@
     <string name="gym">Siłownia</string>
     <string name="where_to_start">Nie wiesz gdzie trenować?</string>
     <string name="check_nearest_gym">Sprawdź pobliskie siłownie!</string>
+    <string name="choose_device_to_connect">Wybierz urządzenie do odbioru</string>
+    <string name="no_paired_devices_pair_in_system">Brak sparowanych urządzeń. Sparuj telefony w systemie.</string>
+    <string name="unknown_device">Nieznane urządzenie</string>
+    <string name="plan_imported">Wgrano plan</string>
+    <string name="impoort_error">Błąd pobrania danych</string>
+    <string name="close">Zamknij</string>
+    <string name="turn_bluetooth_on">Włącz Bluetooth w systemie</string>
+    <string name="permissions_granted">Uprawnienia przyznane</string>
+    <string name="awaiting_connection">Oczekiwanie na połączenie...</string>
+    <string name="successfull_sent">Wysłano pomyślnie!</string>
+    <string name="sent_error">Błąd wysyłania</string>
 </resources>

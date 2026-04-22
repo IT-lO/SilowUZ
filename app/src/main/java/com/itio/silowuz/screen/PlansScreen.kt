@@ -72,6 +72,13 @@ fun PlansScreen(
     paddingValues: PaddingValues,
     viewModel: PlansViewModel = viewModel()
 ){
+    val bluetoothOff = stringResource(R.string.turn_bluetooth_on)
+    val permissionsGranted = stringResource(R.string.permissions_granted)
+    val awaitingConnection = stringResource(R.string.awaiting_connection)
+    val successfullSent = stringResource(R.string.successfull_sent)
+    val sentError = stringResource(R.string.sent_error)
+    val planImported = stringResource(R.string.plan_imported)
+    val importError = stringResource(R.string.impoort_error)
 
     var showExerciseDialog by remember { mutableStateOf(false) }
     var showPlanDialog by remember { mutableStateOf(false) }
@@ -89,7 +96,7 @@ fun PlansScreen(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
         if (permissions[Manifest.permission.BLUETOOTH_CONNECT] == true) {
-            Toast.makeText(context, "Uprawnienia przyznane, spróbuj ponownie", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, permissionsGranted, Toast.LENGTH_SHORT).show()
         }
     }
     val checkAndRunBluetooth = { action: () -> Unit ->
@@ -171,7 +178,7 @@ fun PlansScreen(
                                            showBluetoothImportDialog = true
                                            showMenu = false
                                        } else {
-                                           Toast.makeText(context, "Włącz Bluetooth w systemie", Toast.LENGTH_SHORT).show()
+                                           Toast.makeText(context, bluetoothOff, Toast.LENGTH_SHORT).show()
                                        }
                                    }
                                 },
@@ -243,7 +250,7 @@ fun PlansScreen(
                     PlanCard(
                         trainingPlan = plan,
                         allExercises = viewModel.exercises,
-                        onStartTraining = { /* logika startu */ },
+                        onStartTraining = { },
                         onEdit = { planToEdit = plan },
                         onDelete = { viewModel.deletePlan(plan.id) },
                         onExport = {
@@ -254,9 +261,9 @@ fun PlansScreen(
                                 context.startActivity(discoverableIntent)
 
                                 bluetoothAdapter?.let { adapter ->
-                                    Toast.makeText(context, "Oczekiwanie na połączenie...", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(context, awaitingConnection, Toast.LENGTH_SHORT).show()
                                     viewModel.startBluetoothExport(adapter, plan) { success ->
-                                        val msg = if (success) "Wysłano pomyślnie!" else "Błąd wysyłania"
+                                        val msg = if (success) successfullSent else sentError
                                         Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
                                     }
                                 }
@@ -271,15 +278,15 @@ fun PlansScreen(
     if (showBluetoothImportDialog) {
         AlertDialog(
             onDismissRequest = { showBluetoothImportDialog = false },
-            title = { Text("Wybierz urządzenie do odbioru") },
+            title = { Text(stringResource(R.string.choose_device_to_connect)) },
             text = {
                 if (pairedDevices.isEmpty()) {
-                    Text("Brak sparowanych urządzeń. Sparuj telefony w systemie.")
+                    Text(stringResource(R.string.no_paired_devices_pair_in_system))
                 } else {
                     LazyColumn {
                         items(pairedDevices) { device ->
                             Text(
-                                text = device.name ?: "Nieznane urządzenie",
+                                text = device.name ?: stringResource(R.string.unknown_device),
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .clickable {
@@ -287,9 +294,9 @@ fun PlansScreen(
 
                                         viewModel.importPlanFromDevice(device) { success ->
                                             if (success) {
-                                                Toast.makeText(context, "Plan zaimportowany!", Toast.LENGTH_SHORT).show()
+                                                Toast.makeText(context, planImported, Toast.LENGTH_SHORT).show()
                                             } else {
-                                                Toast.makeText(context, "Błąd importu danych.", Toast.LENGTH_LONG).show()
+                                                Toast.makeText(context, importError, Toast.LENGTH_LONG).show()
                                             }
                                         }
                                     }
@@ -302,7 +309,7 @@ fun PlansScreen(
             },
             confirmButton = {
                 TextButton(onClick = { showBluetoothImportDialog = false }) {
-                    Text("Zamknij")
+                    Text(stringResource(R.string.close))
                 }
             }
         )
