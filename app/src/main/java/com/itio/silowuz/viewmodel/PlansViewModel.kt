@@ -1,15 +1,19 @@
 package com.itio.silowuz.viewmodel
 
+import android.bluetooth.BluetoothAdapter
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.firestore
+import com.itio.silowuz.component.exercise.BluetoothSocket
 import com.itio.silowuz.dataclass.exercise.Exercise
 import com.itio.silowuz.dataclass.exercise.ExportPackage
 import com.itio.silowuz.dataclass.exercise.TrainingPlan
+import kotlinx.coroutines.launch
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 class PlansViewModel : ViewModel() {
@@ -75,31 +79,40 @@ class PlansViewModel : ViewModel() {
     }
 
     fun exportPlan(plan: TrainingPlan): String {
-        val exercisesToExport = exercises.filter { plan.exerciseIds.contains(it.id) }
-
-        val exportPackage = ExportPackage(
-            planName = plan.name,
-            trainingPlan = plan,
-            associatedExercises = exercisesToExport
-        )
-
-        return Json.encodeToString(exportPackage)
+        val associated = exercises.filter { plan.exerciseIds.contains(it.id) }
+        val pkg = ExportPackage(plan.name, plan, associated)
+        return Json.encodeToString(pkg)
     }
 
-    fun importPlanFromJson(jsonString: String) {
-        try {
-            val importedData = Json.decodeFromString<ExportPackage>(jsonString)
+    fun startBluetoothExport(adapter: BluetoothAdapter, plan: TrainingPlan, onComplete: (Boolean) -> Unit) {
+        val json = exportPlan(plan)
+        viewModelScope.launch {
+            val result = BluetoothSocket.startServerAndSend(adapter, json)
+            onComplete(result.isSuccess)
+        }
+    }
 
-            importedData.associatedExercises.forEach { exercise ->
-                if (!exercises.any { it.id == exercise.id }) {
-                    saveExercise(exercise)
+    fun importPlanFromDevice(device: android.bluetooth.BluetoothDevice, onComplete: (Boolean) -> Unit) {
+        viewModelScope.launch {
+            val result = BluetoothSocket.connectAndReceive(device)
+
+            result.onSuccess { json ->
+                try {
+                    val pkg = Json.decodeFromString<ExportPackage>(json)
+
+                    pkg.associatedExercises.forEach { exercise ->
+                        saveExercise(exercise)
+                    }
+
+                    savePlan(pkg.trainingPlan.name, pkg.trainingPlan.exerciseIds)
+
+                    onComplete(true)
+                } catch (e: Exception) {
+                    onComplete(false)
                 }
+            }.onFailure {
+                onComplete(false)
             }
-
-            savePlan(importedData.trainingPlan.name, importedData.trainingPlan.exerciseIds)
-
-        } catch (e: Exception) {
-            e.printStackTrace()
         }
     }
 }

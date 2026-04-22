@@ -166,8 +166,14 @@ fun PlansScreen(
                             Spacer(modifier = Modifier.width(8.dp))
                             SmallFloatingActionButton(
                                 onClick = {
-                                    showBluetoothImportDialog = true
-                                    showMenu = false
+                                   checkAndRunBluetooth {
+                                       if (bluetoothAdapter?.isEnabled == true) {
+                                           showBluetoothImportDialog = true
+                                           showMenu = false
+                                       } else {
+                                           Toast.makeText(context, "Włącz Bluetooth w systemie", Toast.LENGTH_SHORT).show()
+                                       }
+                                   }
                                 },
                             ) {
                                 Icon(
@@ -247,10 +253,12 @@ fun PlansScreen(
                                 }
                                 context.startActivity(discoverableIntent)
 
-                                val json = viewModel.exportPlan(plan)
                                 bluetoothAdapter?.let { adapter ->
-                                    BluetoothSocket.startServerAndSend(adapter, json)
-                                    Toast.makeText(context, "Czekam na połączenie...", Toast.LENGTH_LONG).show()
+                                    Toast.makeText(context, "Oczekiwanie na połączenie...", Toast.LENGTH_SHORT).show()
+                                    viewModel.startBluetoothExport(adapter, plan) { success ->
+                                        val msg = if (success) "Wysłano pomyślnie!" else "Błąd wysyłania"
+                                        Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
+                                    }
                                 }
                             }
                         }
@@ -275,10 +283,15 @@ fun PlansScreen(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .clickable {
-                                        BluetoothSocket.connectAndReceive(device) { receivedJson ->
-                                            viewModel.importPlanFromJson(receivedJson)
-                                        }
                                         showBluetoothImportDialog = false
+
+                                        viewModel.importPlanFromDevice(device) { success ->
+                                            if (success) {
+                                                Toast.makeText(context, "Plan zaimportowany!", Toast.LENGTH_SHORT).show()
+                                            } else {
+                                                Toast.makeText(context, "Błąd importu danych.", Toast.LENGTH_LONG).show()
+                                            }
+                                        }
                                     }
                                     .padding(16.dp)
                             )
