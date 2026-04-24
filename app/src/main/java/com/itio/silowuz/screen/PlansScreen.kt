@@ -133,6 +133,7 @@ fun PlansScreen(
         }
     }
 
+    viewModel.fetchData()
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),

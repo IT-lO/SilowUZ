@@ -29,7 +29,7 @@ class PlansViewModel : ViewModel() {
         fetchData()
     }
 
-    private fun fetchData() {
+    fun fetchData() {
         if (userId.isEmpty()) return
 
         db.collection("exercises")
@@ -76,7 +76,9 @@ class PlansViewModel : ViewModel() {
     }
 
     fun updatePlan(plan: TrainingPlan) {
-        db.collection("plans").document(plan.id).set(plan)
+        val planWithUserId = plan.copy(userId = userId)
+        db.collection("plans").document(plan.id).set(planWithUserId)
+
     }
 
     fun exportPlan(plan: TrainingPlan): String {
