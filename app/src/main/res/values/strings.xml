@@ -54,4 +54,17 @@
     <string name="gym">Gym</string>
     <string name="where_to_start">Don\'t know where to train?</string>
     <string name="check_nearest_gym">Check out the nearest gyms!</string>
+    <string name="shake_again">Shake again to confirm!</string>
+    <string name="shake_to_finish_set">Shake to finish set</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+    <string name="confirm">Confirm?</string>
+    <string name="exercise">Excercise</string>
+    <string name="of">of</string>
+    <string name="set">Set</string>
+    <string name="rest_for_a_while">Rest for a while...</string>
+    <string name="short_break">Rest</string>
+    <string name="no_exercises_left">There are no exercises in this plan</string>
+    <string name="back">Back</string>
+    <string name="set_finished">SET FINISHED!</string>
 </resources>

@@ -48,6 +48,7 @@ import com.itio.silowuz.component.exercise.PlanDialog
 import com.itio.silowuz.dataclass.exercise.Exercise
 import com.itio.silowuz.dataclass.exercise.TrainingPlan
 import com.itio.silowuz.`interface`.IconResource
+import com.itio.silowuz.ui.theme.MainGreen
 import com.itio.silowuz.viewmodel.PlansViewModel
 
 @Composable
@@ -86,7 +87,7 @@ fun PlansScreen(
         },
         floatingActionButton = {
             Column(
-                horizontalAlignment = Alignment.End
+                horizontalAlignment = Alignment.End,
             ) {
 
                 AnimatedVisibility(
@@ -106,6 +107,7 @@ fun PlansScreen(
                             Text(text = stringResource(R.string.create_exercise))
                             Spacer(modifier = Modifier.width(8.dp))
                             SmallFloatingActionButton(
+                                containerColor = MainGreen,
                                 onClick = { showExerciseDialog = true},
                             ) {
                                 when(addExerciseIcon){
@@ -123,6 +125,7 @@ fun PlansScreen(
                             Text(text = stringResource(R.string.create_plan))
                             Spacer(modifier = Modifier.width(8.dp))
                             SmallFloatingActionButton(
+                                containerColor = MainGreen,
                                 onClick = { showPlanDialog = true },
                             ) {
                                 when(addSeriesIcon){
@@ -139,6 +142,7 @@ fun PlansScreen(
                     }
                 }
                 FloatingActionButton(
+                    containerColor = MainGreen,
                     onClick = { showMenu = !showMenu },
                 ) {
                     Icon(Icons.Filled.Add,

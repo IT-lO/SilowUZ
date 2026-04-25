@@ -43,6 +43,8 @@ import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import com.itio.silowuz.R
 import com.itio.silowuz.ui.theme.White
 import kotlinx.coroutines.delay
 import kotlin.math.sqrt
@@ -71,6 +73,12 @@ fun TrainingScreen(
     var prevClickCount by remember { mutableStateOf(0) }
     var confirmationMessage by remember { mutableStateOf("") }
 
+    val shakeAgainText = stringResource(R.string.shake_again)
+    val shakeToFinishText = stringResource(R.string.shake_to_finish_set)
+    val nextText = stringResource(R.string.next)
+    val previousText = stringResource(R.string.previous)
+    val confirmText = stringResource(R.string.confirm)
+
     LaunchedEffect(shakeCount, nextClickCount, prevClickCount) {
         if (shakeCount > 0 || nextClickCount > 0 || prevClickCount > 0) {
             delay(3000)
@@ -86,7 +94,7 @@ fun TrainingScreen(
             if (!showSuccessPopup && restTimeLeft <= 0) {
                 if (shakeCount == 0) {
                     shakeCount = 1
-                    confirmationMessage = "Wstrząśnij jeszcze raz, aby potwierdzić!"
+                    confirmationMessage = shakeAgainText
                 } else {
                     shakeCount = 0
                     confirmationMessage = ""
@@ -135,9 +143,9 @@ fun TrainingScreen(
                     .padding(WindowInsets.statusBars.asPaddingValues())
                     .padding(horizontal = 16.dp, vertical = 8.dp)
             ) {
-                Text(text = "Trening: ${plan.name}", style = MaterialTheme.typography.headlineSmall)
+                Text(text = "${plan.name}", style = MaterialTheme.typography.headlineSmall)
                 Text(
-                    text = "Ćwiczenie ${currentExerciseIndex + 1} z ${exercises.size}",
+                    text = stringResource(R.string.exercise) + " ${currentExerciseIndex + 1} " + stringResource(R.string.of) + " ${exercises.size}",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MainGreen
                 )
@@ -155,7 +163,7 @@ fun TrainingScreen(
             ) {
                 if (currentExercise != null) {
                     Text(
-                        text = "Seria $currentSet z ${currentExercise.sets}",
+                        text = stringResource(R.string.set) + "$currentSet " + stringResource(R.string.of) + " ${currentExercise.sets}",
                         style = MaterialTheme.typography.titleMedium,
                         color = MainGreen
                     )
@@ -167,7 +175,7 @@ fun TrainingScreen(
 
                     if (restTimeLeft <= 0 && !showSuccessPopup) {
                         Text(
-                            text = if (confirmationMessage.isEmpty()) "Potrząśnij, aby zakończyć serię" else confirmationMessage,
+                            text = if (confirmationMessage.isEmpty()) shakeToFinishText else confirmationMessage,
                             style = MaterialTheme.typography.bodyLarge,
                             color = if (confirmationMessage.isEmpty()) SecondaryGreen else MainGreen
                         )
@@ -175,14 +183,14 @@ fun TrainingScreen(
 
                     if (restTimeLeft > 0) {
                         Text(
-                            text = "Odpoczynek: ${restTimeLeft}s",
+                            text = stringResource(R.string.short_break) + ": ${restTimeLeft}s",
                             style = MaterialTheme.typography.headlineLarge,
                             color = MainGreen
                         )
                     }
                 } else {
-                    Text("Brak ćwiczeń w planie")
-                    ActionButton(text = "Wróć", onClick = onFinish)
+                    Text(stringResource(R.string.no_exercises_left))
+                    ActionButton(text = stringResource(R.string.back), onClick = onFinish)
                 }
             }
 
@@ -195,7 +203,7 @@ fun TrainingScreen(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     ActionButton(
-                        text = if (prevClickCount == 0) "Poprzedni" else "Potwierdź?",
+                        text = if (prevClickCount == 0) previousText else confirmText,
                         modifier = Modifier.width(120.dp),
                         onClick = {
                             if (currentExerciseIndex > 0) {
@@ -212,7 +220,7 @@ fun TrainingScreen(
                     )
 
                     ActionButton(
-                        text = if (nextClickCount == 0) "Następny" else "Potwierdź?",
+                        text = if (nextClickCount == 0) nextText else confirmText,
                         modifier = Modifier.width(120.dp),
                         onClick = {
                             if (nextClickCount == 0) {
@@ -244,8 +252,8 @@ fun TrainingScreen(
                             .padding(32.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Text("SERIA ZALICZONA!", color = White, style = MaterialTheme.typography.headlineMedium)
-                        Text("Odpocznij chwilę...", color = White)
+                        Text(stringResource(R.string.set_finished), color = White, style = MaterialTheme.typography.headlineMedium)
+                        Text(stringResource(R.string.rest_for_a_while), color = White)
                     }
                 }
             }
@@ -268,10 +276,10 @@ fun ExerciseProgressCard(exercise: Exercise) {
         Spacer(modifier = Modifier.height(16.dp))
 
         Row(horizontalArrangement = Arrangement.spacedBy(24.dp)) {
-            ProgressStat(label = "Serie", value = exercise.sets.toString())
-            ProgressStat(label = "Powtórzenia", value = exercise.reps.toString())
+            ProgressStat(label = stringResource(R.string.exercise_sets), value = exercise.sets.toString())
+            ProgressStat(label = stringResource(R.string.exercise_reps), value = exercise.reps.toString())
             if (exercise.weight != null) {
-                ProgressStat(label = "Ciężar", value = "${exercise.weight} kg")
+                ProgressStat(label = stringResource(R.string.exercise_weight), value = "${exercise.weight} kg")
             }
         }
     }
