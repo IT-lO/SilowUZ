@@ -50,4 +50,8 @@
     <string name="add_exercise_to_plan">Add exercise to plan</string>
     <string name="choose_exercise">Choose exercise</string>
     <string name="no_more_exercises">No more exercises</string>
+    <string name="map">Map</string>
+    <string name="gym">Gym</string>
+    <string name="where_to_start">Don\'t know where to train?</string>
+    <string name="check_nearest_gym">Check out the nearest gyms!</string>
 </resources>
