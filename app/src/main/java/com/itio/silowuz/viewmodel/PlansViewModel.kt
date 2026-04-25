@@ -70,4 +70,8 @@ class PlansViewModel : ViewModel() {
     fun updatePlan(plan: TrainingPlan) {
         db.collection("plans").document(plan.id).set(plan)
     }
+
+    fun getExercisesForPlan(exerciseIds: List<String>): List<Exercise> {
+        return exercises.filter { it.id in exerciseIds }
+    }
 }

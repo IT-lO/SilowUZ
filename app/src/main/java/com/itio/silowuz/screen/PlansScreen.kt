@@ -53,7 +53,8 @@ import com.itio.silowuz.viewmodel.PlansViewModel
 @Composable
 fun PlansScreen(
     paddingValues: PaddingValues,
-    viewModel: PlansViewModel = viewModel()
+    viewModel: PlansViewModel = viewModel(),
+    onStartTraining: (TrainingPlan) -> Unit
 ){
 
     var showExerciseDialog by remember { mutableStateOf(false) }
@@ -162,7 +163,7 @@ fun PlansScreen(
                     PlanCard(
                         trainingPlan = plan,
                         allExercises = viewModel.exercises,
-                        onStartTraining = { /* logika startu */ },
+                        onStartTraining = { onStartTraining(plan) },
                         onEdit = { planToEdit = plan },
                         onDelete = { viewModel.deletePlan(plan.id) }
                     )

@@ -25,12 +25,14 @@ import com.google.firebase.Firebase
 import com.google.firebase.appcheck.FirebaseAppCheck
 import com.google.firebase.appcheck.playintegrity.PlayIntegrityAppCheckProviderFactory
 import com.google.firebase.initialize
+import com.itio.silowuz.dataclass.exercise.TrainingPlan
 import com.itio.silowuz.`interface`.IconResource
 import com.itio.silowuz.screen.HomeScreen
 import com.itio.silowuz.screen.LoginScreen
 import com.itio.silowuz.screen.PlansScreen
 import com.itio.silowuz.screen.ProfileScreen
 import com.itio.silowuz.screen.RegisterScreen
+import com.itio.silowuz.screen.TrainingScreen
 import com.itio.silowuz.ui.theme.SilowUZTheme
 
 class MainActivity : AppCompatActivity() {
@@ -88,7 +90,7 @@ fun MainRoot() {
 @Composable
 fun SilowUZApp(onLogout: () -> Unit) {
     var currentDestination by rememberSaveable { mutableStateOf(AppDestinations.HOME) }
-
+    var activeTrainingPlan by remember { mutableStateOf<TrainingPlan?>(null) }
     NavigationSuiteScaffold(
         navigationSuiteItems = {
             AppDestinations.entries.forEach { destination ->
@@ -118,10 +120,22 @@ fun SilowUZApp(onLogout: () -> Unit) {
         }
     ) {
         Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-            when (currentDestination) {
-                AppDestinations.HOME -> HomeScreen(innerPadding)
-                AppDestinations.PLANS -> PlansScreen(innerPadding)
-                AppDestinations.PROFILE -> ProfileScreen(innerPadding, onLogout)
+            if (activeTrainingPlan != null) {
+                TrainingScreen(
+                    plan = activeTrainingPlan!!,
+                    onFinish = { activeTrainingPlan = null }
+                )
+            } else {
+                when (currentDestination) {
+                    AppDestinations.HOME -> HomeScreen(innerPadding)
+                    AppDestinations.PLANS -> {
+                        PlansScreen(
+                            paddingValues = innerPadding,
+                            onStartTraining = { plan -> activeTrainingPlan = plan }
+                        )
+                    }
+                    AppDestinations.PROFILE -> ProfileScreen(innerPadding, onLogout)
+                }
             }
         }
     }
