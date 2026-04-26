@@ -31,10 +31,10 @@ object BluetoothSocket {
             }
 
             if (socket != null) Result.success(Unit)
-            else Result.failure(Exception("Timeout: Nikt się nie połączył"))
+            else Result.failure(Exception("Timeout: Nobody Connected"))
 
         } catch (e: Exception) {
-            Log.e("BT_DEBUG", "Błąd: ${e.message}")
+            Log.e("BT_DEBUG", "Error: ${e.message}")
             Result.failure(e)
         }
     }
@@ -47,9 +47,9 @@ object BluetoothSocket {
             val result = reader.readLine()
             socket.close()
             if (result != null) Result.success(result)
-            else Result.failure(Exception("Otrzymano pusty strumień"))
+            else Result.failure(Exception("Received empty string"))
         } catch (e: Exception) {
-            Log.e("BT_ERROR", "Błąd połączenia: ${e.message}")
+            Log.e("BT_ERROR", "Connection Error: ${e.message}")
             Result.failure(e)
         }
     }

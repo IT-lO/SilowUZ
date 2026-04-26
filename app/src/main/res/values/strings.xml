@@ -56,4 +56,14 @@
     <string name="check_nearest_gym">Check out the nearest gyms!</string>
     <string name="import_" translatable="false">Import</string>
     <string name="awaiting_connection">Oczekiwanie na połączenie...</string>
+    <string name="choose_device_to_connect">Chooce receiving device</string>
+    <string name="no_paired_devices_pair_in_system">No paired devices. Pair in phone settings</string>
+    <string name="unknown_device">Unknown device</string>
+    <string name="plan_imported">Plan imported</string>
+    <string name="impoort_error">Import error</string>
+    <string name="close">Close</string>
+    <string name="turn_bluetooth_on">Turn on Bluetooth</string>
+    <string name="permissions_granted">Permissions granted</string>
+    <string name="successfull_sent">Sent succesfully</string>
+    <string name="sent_error">Export error</string>
 </resources>
