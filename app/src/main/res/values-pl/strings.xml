@@ -63,4 +63,11 @@
     <string name="awaiting_connection">Oczekiwanie na połączenie...</string>
     <string name="successfull_sent">Wysłano pomyślnie!</string>
     <string name="sent_error">Błąd wysyłania</string>
+    <string name="training_reminder_label">Przypomnienie o treningu</string>
+    <string name="training_reminder_time">Godzina: %1$02d:%2$02d</string>
+    <string name="training_notification_title">Czas na trening</string>
+    <string name="training_notification_text">Nie zapomnij o dzisiejszym treningu.</string>
+    <string name="training_notification_channel_name">Przypomnienia treningowe</string>
+    <string name="training_notification_channel_description">Codzienne przypomnienia o treningu</string>
+
 </resources>
