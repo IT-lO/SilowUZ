@@ -69,5 +69,8 @@
     <string name="training_notification_text">Nie zapomnij o dzisiejszym treningu.</string>
     <string name="training_notification_channel_name">Przypomnienia treningowe</string>
     <string name="training_notification_channel_description">Codzienne przypomnienia o treningu</string>
-
+    <string name="theme_mode_label">Motyw</string>
+    <string name="theme_system">Systemowy</string>
+    <string name="theme_light">Jasny</string>
+    <string name="theme_dark">Ciemny</string>
 </resources>

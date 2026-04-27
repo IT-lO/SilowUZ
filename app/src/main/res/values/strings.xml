@@ -72,5 +72,8 @@
     <string name="training_notification_text">Don\'t forget today\'s workout.</string>
     <string name="training_notification_channel_name">Training reminders</string>
     <string name="training_notification_channel_description">Daily workout reminder notifications</string>
-
+    <string name="theme_mode_label">Theme</string>
+    <string name="theme_system">System</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
 </resources>

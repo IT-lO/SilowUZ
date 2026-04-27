@@ -43,6 +43,8 @@ import androidx.compose.material3.Switch
 import androidx.core.content.ContextCompat
 import com.itio.silowuz.data.TrainingReminderPrefs
 import com.itio.silowuz.services.TrainingReminderScheduler
+import androidx.compose.material3.Slider
+import kotlin.math.roundToInt
 
 
 @Composable
@@ -57,6 +59,33 @@ fun ProfileScreen(paddingValues: PaddingValues, onLogout: () -> Unit){
     var reminderEnabled by remember { mutableStateOf(reminderPrefs.enabled) }
     var reminderHour by remember { mutableStateOf(reminderPrefs.hour) }
     var reminderMinute by remember { mutableStateOf(reminderPrefs.minute) }
+
+    val themePrefs = remember { com.itio.silowuz.data.ThemePrefs(context) }
+
+    var themeSliderPosition by remember {
+        mutableStateOf(
+            when (themePrefs.nightMode) {
+                AppCompatDelegate.MODE_NIGHT_NO -> 1f
+                AppCompatDelegate.MODE_NIGHT_YES -> 2f
+                else -> 0f // Systemowy
+            }
+        )
+    }
+
+    fun applyThemeFromSlider(value: Float) {
+        val step = value.roundToInt().coerceIn(0, 2)
+        themeSliderPosition = step.toFloat()
+
+        val mode = when (step) {
+            1 -> AppCompatDelegate.MODE_NIGHT_NO
+            2 -> AppCompatDelegate.MODE_NIGHT_YES
+            else -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
+        }
+
+        themePrefs.nightMode = mode
+        AppCompatDelegate.setDefaultNightMode(mode)
+    }
+
 
     fun enableAndSchedule() {
         reminderEnabled = true
@@ -99,6 +128,28 @@ fun ProfileScreen(paddingValues: PaddingValues, onLogout: () -> Unit){
                 modifier = Modifier.size(40.dp)
             )
         }
+        Text(
+            text = stringResource(R.string.theme_mode_label),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 8.dp)
+        )
+
+        Slider(
+            value = themeSliderPosition,
+            onValueChange = { applyThemeFromSlider(it) },
+            valueRange = 0f..2f,
+            steps = 1,
+            modifier = Modifier.padding(horizontal = 16.dp)
+        )
+
+        val themeLabel = when (themeSliderPosition.roundToInt()) {
+            1 -> stringResource(R.string.theme_light)
+            2 -> stringResource(R.string.theme_dark)
+            else -> stringResource(R.string.theme_system)
+        }
+        Text(text = themeLabel)
+
         Row(
             modifier = Modifier
                 .fillMaxWidth()
