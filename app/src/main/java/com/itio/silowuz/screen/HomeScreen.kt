@@ -90,7 +90,7 @@ fun HomeScreen(paddingValues: PaddingValues,
             ){
                 Column {
                     Text(
-                        text = stringResource(R.string.welcome) + ", ${uiState.userName}!",
+                        text = stringResource(R.string.welcome) + ", ${com.google.firebase.auth.FirebaseAuth.getInstance().currentUser?.displayName}! ",
                         color = White,
                         fontSize = 24.sp
                     )
