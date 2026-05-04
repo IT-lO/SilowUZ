@@ -36,6 +36,16 @@ import androidx.compose.ui.window.Dialog
 import com.itio.silowuz.R
 import com.itio.silowuz.dataclass.exercise.Exercise
 
+/**
+ * Dialog composable for creating or editing exercises.
+ * Provides a form with fields for exercise name, repetitions, sets, weight, and duration.
+ * Validates input on save and uses the provided onSave callback to persist changes.
+ * 
+ * @param exercise Optional existing exercise to edit (null for creating a new exercise)
+ * @param onDismissRequest Callback invoked when the dialog is dismissed without saving
+ * @param onSave Callback invoked with exercise data (name, reps, sets, weight, duration) when saved
+ * @param paddingValues Padding values for dialog layout customization
+ */
 @Composable
 fun ExerciseDialog(
     exercise: Exercise? = null,

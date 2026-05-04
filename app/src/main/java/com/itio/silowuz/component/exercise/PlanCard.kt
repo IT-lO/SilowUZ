@@ -29,6 +29,19 @@ import com.itio.silowuz.dataclass.exercise.TrainingPlan
 import com.itio.silowuz.ui.theme.MainGreen
 import com.itio.silowuz.ui.theme.SecondaryGreen
 import com.itio.silowuz.ui.theme.White
+
+/**
+ * Composable card displaying a training plan with its exercises and action buttons.
+ * Shows the plan name, list of exercises with their reps/sets, and provides quick actions
+ * for starting training, exporting, editing, or deleting the plan.
+ * 
+ * @param trainingPlan The training plan to display
+ * @param allExercises List of all available exercises to filter those in this plan
+ * @param onStartTraining Callback invoked when user clicks the "Start Training" button
+ * @param onEdit Callback invoked when user clicks the Edit (E) button
+ * @param onDelete Callback invoked when user clicks the Delete (U) button
+ * @param onExport Callback invoked when user clicks the Export (B) button
+ */
 @Composable
 fun PlanCard(
     trainingPlan: TrainingPlan,
@@ -105,6 +118,14 @@ fun PlanCard(
     }
 }
 
+/**
+ * Small green action button used within PlanCard for quick operations.
+ * Displays a single character label (B, E, U) with click capability.
+ * 
+ * @param text Single character label to display on the button
+ * @param modifier Modifier that can be used to customize size and layout
+ * @param onClick Callback invoked when the button is clicked
+ */
 @Composable
 fun ActionButton(text: String, modifier: Modifier = Modifier, onClick: () -> Unit) {
     Box(

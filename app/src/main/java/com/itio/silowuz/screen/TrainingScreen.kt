@@ -49,6 +49,15 @@ import com.itio.silowuz.ui.theme.White
 import kotlinx.coroutines.delay
 import kotlin.math.sqrt
 
+/**
+ * Composable function that displays the training screen where users can perform exercises.
+ * This screen tracks exercise progress, handles shake detection for set completion,
+ * and manages transitions between sets and exercises using Bluetooth sensor data.
+ * 
+ * @param plan The training plan to execute
+ * @param viewModel The PlansViewModel instance for data management (uses default.viewModel() if not provided)
+ * @param onFinish Callback function called when the training is completed or exited
+ */
 @Composable
 fun TrainingScreen(
     plan: TrainingPlan,
@@ -261,6 +270,12 @@ fun TrainingScreen(
     }
 }
 
+/**
+ * Displays a card showing exercise progress information including name, sets, reps, and weight.
+ * The card uses a styled border and background for visual distinction.
+ * 
+ * @param exercise The exercise to display progress for
+ */
 @Composable
 fun ExerciseProgressCard(exercise: Exercise) {
     Column(
@@ -285,6 +300,13 @@ fun ExerciseProgressCard(exercise: Exercise) {
     }
 }
 
+/**
+ * Displays a single progress statistic with a label and value.
+ * Used within ExerciseProgressCard to show individual exercise metrics.
+ * 
+ * @param label The text label for the statistic (e.g., "Sets", "Reps")
+ * @param value The numeric value to display
+ */
 @Composable
 fun ProgressStat(label: String, value: String) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -293,6 +315,13 @@ fun ProgressStat(label: String, value: String) {
     }
 }
 
+/**
+ * SensorEventListener that detects device shake movements.
+ * Uses accelerometer data to calculate g-force and determines if the device
+ * has been shaken (threshold > 2.7g). Includes cooldown period (1 second) between detections.
+ * 
+ * @param onShake Callback function invoked when a valid shake is detected
+ */
 class ShakeDetector(private val onShake: () -> Unit) : SensorEventListener {
     private var lastShakeTime: Long = 0
 
