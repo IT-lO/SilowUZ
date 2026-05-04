@@ -15,10 +15,11 @@
     <string name="home">Start</string>
     <string name="plans">Plany</string>
     <string name="profile">Konto</string>
-    <string name="exercise_name">Nazwa ćwiczenia</string>
-    <string name="exercise_reps">Powtórzenia</string>
-    <string name="exercise_sets">Serie</string>
-    <string name="exercise_weight">Ciężar</string>
+    <string name="exercise_name">Nazwa ćwiczenia*</string>
+    <string name="exercise_reps">Powtórzenia*</string>
+    <string name="exercise_sets">Serie*</string>
+    <string name="exercise_weight">Ciężar*</string>
+    <string name="new_exercise">Nowe ćwiczenie</string>
     <string name="exercise_duration">Czas</string>
     <string name="cancel">Anuluj</string>
     <string name="save">Zapisz</string>
@@ -73,4 +74,17 @@
     <string name="theme_system">Systemowy</string>
     <string name="theme_light">Jasny</string>
     <string name="theme_dark">Ciemny</string>
+    <string name="shake_again">Wstrząśnij jeszcze raz, aby potwierdzić!</string>
+    <string name="shake_to_finish_set">Potrząśnij, aby zakończyć serię</string>
+    <string name="next">Następna</string>
+    <string name="previous">Poprzednia</string>
+    <string name="confirm">Potwierdź?</string>
+    <string name="exercise">Ćwiczenie</string>
+    <string name="of">z</string>
+    <string name="set">Seria</string>
+    <string name="short_break">Odpoczynek</string>
+    <string name="no_exercises_left">Brak ćwiczeń w planie</string>
+    <string name="back">Wróć</string>
+    <string name="set_finished">SERIA ZALICZONA!</string>
+    <string name="rest_for_a_while">Odpocznij chwilę...</string>
 </resources>

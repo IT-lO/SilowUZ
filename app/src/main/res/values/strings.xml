@@ -16,10 +16,11 @@
     <string name="home">Home</string>
     <string name="plans">Plans</string>
     <string name="profile">Profile</string>
-    <string name="exercise_name">Exercise name</string>
-    <string name="exercise_reps">Reps</string>
-    <string name="exercise_sets">Sets</string>
-    <string name="exercise_weight">Weight</string>
+    <string name="exercise_name">Exercise name*</string>
+    <string name="exercise_reps">Reps*</string>
+    <string name="exercise_sets">Sets*</string>
+    <string name="exercise_weight">Weight*</string>
+    <string name="new_exercise">New exercise</string>
     <string name="exercise_duration">Duration</string>
     <string name="cancel">Cancel</string>
     <string name="save">Save</string>
@@ -76,4 +77,17 @@
     <string name="theme_system">System</string>
     <string name="theme_light">Light</string>
     <string name="theme_dark">Dark</string>
+    <string name="shake_again">Shake again to confirm!</string>
+    <string name="shake_to_finish_set">Shake to finish set</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+    <string name="confirm">Confirm?</string>
+    <string name="exercise">Excercise</string>
+    <string name="of">of</string>
+    <string name="set">Set</string>
+    <string name="rest_for_a_while">Rest for a while...</string>
+    <string name="short_break">Rest</string>
+    <string name="no_exercises_left">There are no exercises in this plan</string>
+    <string name="back">Back</string>
+    <string name="set_finished">SET FINISHED!</string>
 </resources>

@@ -1,5 +1,11 @@
 package com.itio.silowuz.screen
 
+/**
+ * Main screen for managing training plans and exercises.
+ * Provides a tabbed interface allowing users to switch between viewing their plans 
+ * and managing individual exercises. Includes functionality for creating, editing, 
+ * deleting, importing via Bluetooth, and exporting data.
+ */
 import android.Manifest
 import android.bluetooth.BluetoothAdapter
 import android.content.pm.PackageManager
@@ -7,7 +13,6 @@ import android.os.Build
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.RequiresPermission
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.fadeIn
@@ -64,13 +69,26 @@ import com.itio.silowuz.component.exercise.PlanDialog
 import com.itio.silowuz.dataclass.exercise.Exercise
 import com.itio.silowuz.dataclass.exercise.TrainingPlan
 import com.itio.silowuz.`interface`.IconResource
+import com.itio.silowuz.ui.theme.MainGreen
+import com.itio.silowuz.ui.theme.White
 import com.itio.silowuz.viewmodel.PlansViewModel
 
-@RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
+/**
+ * Composable function that displays the main plans and exercises screen.
+ * This is the central hub for managing training content with features including:
+ * - Tabbed view switching between Plans and Exercises modes
+ * - Creating, editing, and deleting exercises and plans
+ * - Bluetooth import/export functionality for data transfer
+ * 
+ * @param paddingValues Padding values to apply around the screen content
+ * @param viewModel The PlansViewModel instance for managing plans and exercises data (uses default.viewModel() if not provided)
+ * @param onStartTraining Callback invoked when a user starts a training plan
+ */
 @Composable
 fun PlansScreen(
     paddingValues: PaddingValues,
-    viewModel: PlansViewModel = viewModel()
+    viewModel: PlansViewModel = viewModel(),
+    onStartTraining: (TrainingPlan) -> Unit
 ){
     val bluetoothOff = stringResource(R.string.turn_bluetooth_on)
     val permissionsGranted = stringResource(R.string.permissions_granted)
@@ -79,6 +97,7 @@ fun PlansScreen(
     val sentError = stringResource(R.string.sent_error)
     val planImported = stringResource(R.string.plan_imported)
     val importError = stringResource(R.string.impoort_error)
+    var fillAllFieldsText = stringResource(R.string.fill_all_fields)
 
     var showExerciseDialog by remember { mutableStateOf(false) }
     var showPlanDialog by remember { mutableStateOf(false) }
@@ -153,7 +172,7 @@ fun PlansScreen(
         },
         floatingActionButton = {
             Column(
-                horizontalAlignment = Alignment.End
+                horizontalAlignment = Alignment.End,
             ) {
 
                 AnimatedVisibility(
@@ -183,10 +202,12 @@ fun PlansScreen(
                                        }
                                    }
                                 },
+                                containerColor = MainGreen,
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.ArrowBack,
-                                    contentDescription = stringResource(R.string.import_)
+                                    contentDescription = stringResource(R.string.import_),
+                                    tint = White
                                 )
                             }
                         }
@@ -194,13 +215,16 @@ fun PlansScreen(
                             Text(text = stringResource(R.string.create_exercise))
                             Spacer(modifier = Modifier.width(8.dp))
                             SmallFloatingActionButton(
+                                containerColor = MainGreen,
                                 onClick = { showExerciseDialog = true},
                             ) {
                                 when(addExerciseIcon){
                                     is IconResource.Drawable -> {
                                         Icon(
                                             painter = painterResource(id = addExerciseIcon.resId),
-                                            contentDescription = stringResource(R.string.create_exercise)
+                                            contentDescription = stringResource(R.string.create_exercise),
+                                            tint = White
+
                                         )
                                     }
                                     else -> { }
@@ -211,13 +235,15 @@ fun PlansScreen(
                             Text(text = stringResource(R.string.create_plan))
                             Spacer(modifier = Modifier.width(8.dp))
                             SmallFloatingActionButton(
+                                containerColor = MainGreen,
                                 onClick = { showPlanDialog = true },
                             ) {
                                 when(addSeriesIcon){
                                     is IconResource.Drawable -> {
                                         Icon(
                                             painter = painterResource(id = addSeriesIcon.resId),
-                                            contentDescription = stringResource(R.string.create_plan)
+                                            contentDescription = stringResource(R.string.create_plan),
+                                            tint = White
                                         )
                                     }
                                     else -> { }
@@ -227,11 +253,13 @@ fun PlansScreen(
                     }
                 }
                 FloatingActionButton(
+                    containerColor = MainGreen,
                     onClick = { showMenu = !showMenu },
                 ) {
                     Icon(Icons.Filled.Add,
                         contentDescription = stringResource(id = R.string.exercise_menu),
-                        modifier = Modifier.rotate(iconRotation)
+                        modifier = Modifier.rotate(iconRotation),
+                        tint = White
                     )
                 }
             }
@@ -251,7 +279,7 @@ fun PlansScreen(
                     PlanCard(
                         trainingPlan = plan,
                         allExercises = viewModel.exercises,
-                        onStartTraining = { },
+                        onStartTraining = { onStartTraining(plan) },
                         onEdit = { planToEdit = plan },
                         onDelete = { viewModel.deletePlan(plan.id) },
                         onExport = {
@@ -273,7 +301,6 @@ fun PlansScreen(
                     )
                 }
             }
-
         }
     }
     if (showBluetoothImportDialog) {
@@ -323,9 +350,13 @@ fun PlansScreen(
                 exerciseToEdit = null
             },
             onSave = { name, reps, sets, weight, duration ->
-                viewModel.saveExercise(Exercise(exerciseToEdit?.id ?: "", name, reps, sets, weight, duration))
-                showExerciseDialog = false
-                exerciseToEdit = null
+                if (isExerciseValid(name, reps.toString(), sets.toString())) {
+                    viewModel.saveExercise(Exercise(exerciseToEdit?.id ?: "", name, reps, sets, weight, duration))
+                    showExerciseDialog = false
+                    exerciseToEdit = null
+                } else {
+                    Toast.makeText(context, fillAllFieldsText, Toast.LENGTH_SHORT).show()
+                }
             },
             paddingValues = paddingValues
         )
@@ -350,4 +381,19 @@ fun PlansScreen(
             }
         )
     }
+}
+
+/**
+ * Validates exercise data for saving to Firebase.
+ * Checks that all required fields have valid values before persisting.
+ * 
+ * @param name Exercise name - must not be blank (at least one non-whitespace character)
+ * @param reps Number of repetitions - must be a valid integer
+ * @param sets Number of sets - must be a valid integer
+ * @return True if all fields are valid, false otherwise
+ */
+fun isExerciseValid(name: String, reps: String, sets: String): Boolean {
+    return name.isNotBlank() &&
+            reps.toIntOrNull() != null &&
+            sets.toIntOrNull() != null
 }

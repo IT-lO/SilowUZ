@@ -244,68 +244,6 @@ fun HomeScreen(paddingValues: PaddingValues,
                             }
                         }
                     }
-
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    Row() {
-                        Box(
-                            modifier = Modifier
-                                .weight(1f)
-                                .border(
-                                    1.dp,
-                                    MainGreen,
-                                    RoundedCornerShape(15.dp, 15.dp, 15.dp, 15.dp)
-                                )
-                                .clip(shape = RoundedCornerShape(15.dp, 15.dp, 15.dp, 15.dp))
-                                .padding(horizontal = 15.dp, vertical = 10.dp),
-                            contentAlignment = Alignment.TopStart
-                        )
-                        {
-                            Column() {
-                                Text(
-                                    text = "${uiState.streakDays}",
-                                    fontSize = 32.sp,
-                                    fontWeight = FontWeight.Bold
-
-                                )
-                                Text(
-                                    text = stringResource(R.string.training_day_streak),
-                                    color = SubTextGray,
-                                    fontSize = 12.sp
-                                )
-                            }
-                        }
-
-                        Spacer(modifier = Modifier.width(8.dp))
-
-                        Box(
-                            modifier = Modifier
-                                .weight(1f)
-                                .border(
-                                    1.dp,
-                                    MainGreen,
-                                    RoundedCornerShape(15.dp, 15.dp, 15.dp, 15.dp)
-                                )
-                                .clip(shape = RoundedCornerShape(15.dp, 15.dp, 15.dp, 15.dp))
-                                .padding(horizontal = 15.dp, vertical = 10.dp),
-                            contentAlignment = Alignment.TopStart
-                        )
-                        {
-                            Column() {
-                                Text(
-                                    text = "${uiState.activeMinutes}",
-                                    fontSize = 32.sp,
-                                    fontWeight = FontWeight.Bold
-
-                                )
-                                Text(
-                                    text = stringResource(R.string.active_minutes),
-                                    color = SubTextGray,
-                                    fontSize = 12.sp
-                                )
-                            }
-                        }
-                    }
                 }
             }
 

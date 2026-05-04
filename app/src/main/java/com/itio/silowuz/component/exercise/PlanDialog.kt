@@ -23,6 +23,16 @@ import com.itio.silowuz.dataclass.exercise.Exercise
 import com.itio.silowuz.dataclass.exercise.TrainingPlan
 import com.itio.silowuz.R
 
+/**
+ * Dialog composable for creating or editing training plans.
+ * Allows users to set a plan name and add/remove exercises from the selected list.
+ * Uses a dropdown menu for selecting new exercises and a scrollable list for displayed selections.
+ * 
+ * @param planToEdit Optional existing plan to edit (null for creating a new plan)
+ * @param availableExercises List of all available exercises that can be added to the plan
+ * @param onDismissRequest Callback invoked when the dialog is dismissed without saving
+ * @param onSave Callback invoked with the plan name and list of selected exercise IDs when saved
+ */
 @Composable
 fun PlanDialog(
     planToEdit: TrainingPlan? = null,

@@ -23,6 +23,15 @@ import androidx.compose.ui.unit.sp
 import com.itio.silowuz.R
 import com.itio.silowuz.dataclass.exercise.Exercise
 
+/**
+ * Composable card displaying an exercise with its details and action buttons.
+ * Shows the exercise name, reps, sets, weight, and duration.
+ * Provides edit and delete actions via callbacks.
+ * 
+ * @param exercise The exercise object to display
+ * @param onEdit Callback invoked when the user clicks the edit button
+ * @param onDelete Callback invoked when the user clicks the delete button
+ */
 @Composable
 fun ExerciseCard(
     exercise: Exercise,
