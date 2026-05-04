@@ -35,7 +35,14 @@ val ButtonTextLight = Color(0xFFFFFFFF)
 val LinkGreen = Color(0xFF00A63E)
 val LogoGradientStart = Color(0xFF00C950)
 val LogoGradientEnd = Color(0xFF009966)
-
+/**
+ * Composable screen for user authentication.
+ * Displays a login form with email and password fields, handles Firebase authentication,
+ * and provides navigation to the registration screen. Includes error handling for empty
+ * fields and Firebase connection issues.
+ * @param onLoginSuccess Callback invoked when the user successfully authenticates via Firebase
+ * @param onNavigateToRegister Callback invoked when the user clicks the registration link
+ */
 @Composable
 fun LoginScreen(onLoginSuccess: () -> Unit, onNavigateToRegister: () -> Unit) {
     var email by remember { mutableStateOf("") }
@@ -180,7 +187,16 @@ fun LoginScreen(onLoginSuccess: () -> Unit, onNavigateToRegister: () -> Unit) {
         }
     }
 }
-
+/**
+ * Custom input field component used across the application.
+ * Displays an optional label above a styled text field. Supports standard text
+ * and password visual transformations.
+ * @param label The text to display above the text field. Can be null if no label is needed
+ * @param value The current text value of the input field
+ * @param onValueChange Callback invoked when the text input changes
+ * @param isPassword Boolean flag to determine if the input should be obscured (true for passwords)
+ * @param placeholder Optional text to display when the input field is empty
+ */
 @Composable
 fun InputField(
     label: String?,
