@@ -20,7 +20,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.itio.silowuz.R
+import com.itio.silowuz.services.validateRegistrationInput
 
+/**
+ * Composable screen for new user registration.
+ * Displays a scrollable form with fields for name, email, password, and password confirmation.
+ * Handles local input validation and creates a new user account using Firebase Authentication.
+ * Upon successful creation, it updates the Firebase user profile with the provided display name.
+ *
+ * @param onRegisterSuccess Callback invoked when the user account is successfully created and the profile is updated
+ * @param onNavigateToLogin Callback invoked when the user clicks the link to return to the login screen
+ */
 @Composable
 fun RegisterScreen(onRegisterSuccess: () -> Unit, onNavigateToLogin: () -> Unit) {
     var name by remember { mutableStateOf("") }
@@ -130,20 +140,10 @@ fun RegisterScreen(onRegisterSuccess: () -> Unit, onNavigateToLogin: () -> Unit)
                     onClick = {
                         if (isLoading) return@Button
 
-                        val emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[a-zA-Z]+\$".toRegex()
-                        val passwordRegex = "^(?=.*[A-Z])(?=.*\\d).{8,}\$".toRegex()
+                        val validationError = validateRegistrationInput(name, email, password, confirmPassword)
 
-                        if (name.isBlank() || email.isBlank() || password.isBlank()) {
-                            errorMessageRes = R.string.fill_all_fields
-                            firebaseErrorMessage = null
-                        } else if (!email.matches(emailRegex)) {
-                            errorMessageRes = R.string.invalid_email
-                            firebaseErrorMessage = null
-                        } else if (!password.matches(passwordRegex)) {
-                            errorMessageRes = R.string.weak_password
-                            firebaseErrorMessage = null
-                        } else if (password != confirmPassword) {
-                            errorMessageRes = R.string.passwords_not_match
+                        if (validationError != null) {
+                            errorMessageRes = validationError
                             firebaseErrorMessage = null
                         } else {
                             errorMessageRes = null
