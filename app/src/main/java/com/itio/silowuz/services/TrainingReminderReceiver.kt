@@ -17,8 +17,21 @@ import android.content.pm.PackageManager
 import androidx.core.content.ContextCompat
 
 
+/**
+ * BroadcastReceiver responsible for handling scheduled training reminder alarms.
+ * Displays the reminder notification and schedules the next daily reminder
+ * when reminders are still enabled in user preferences.
+ */
 class TrainingReminderReceiver : BroadcastReceiver() {
 
+    /**
+     * Called by AlarmManager when the reminder alarm is triggered.
+     * Creates the notification channel if needed, shows the notification,
+     * and schedules the next reminder occurrence.
+     *
+     * @param context Receiver context
+     * @param intent Broadcast intent from AlarmManager
+     */
     override fun onReceive(context: Context, intent: Intent?) {
         createChannelIfNeeded(context)
         showNotification(context)
@@ -30,6 +43,13 @@ class TrainingReminderReceiver : BroadcastReceiver() {
         }
     }
 
+    /**
+     * Builds and displays the training reminder notification.
+     * On Android 13+ it sends the notification only if POST_NOTIFICATIONS
+     * permission is granted.
+     *
+     * @param context Receiver context
+     */
     private fun showNotification(context: Context) {
         val openAppIntent = Intent(context, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
@@ -62,6 +82,12 @@ class TrainingReminderReceiver : BroadcastReceiver() {
 
     }
 
+    /**
+     * Creates the notification channel used for training reminders
+     * on Android O and above.
+     *
+     * @param context Receiver context
+     */
     private fun createChannelIfNeeded(context: Context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
