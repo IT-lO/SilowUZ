@@ -66,4 +66,14 @@
     <string name="permissions_granted">Permissions granted</string>
     <string name="successfull_sent">Sent succesfully</string>
     <string name="sent_error">Export error</string>
+    <string name="training_reminder_label">Training reminder</string>
+    <string name="training_reminder_time">Time: %1$02d:%2$02d</string>
+    <string name="training_notification_title">Time to train</string>
+    <string name="training_notification_text">Don\'t forget today\'s workout.</string>
+    <string name="training_notification_channel_name">Training reminders</string>
+    <string name="training_notification_channel_description">Daily workout reminder notifications</string>
+    <string name="theme_mode_label">Theme</string>
+    <string name="theme_system">System</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
 </resources>

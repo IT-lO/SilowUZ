@@ -21,7 +21,6 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.itio.silowuz.dataclass.exercise.Exercise
 import com.itio.silowuz.dataclass.exercise.TrainingPlan
-import com.itio.silowuz.ui.theme.White
 import com.itio.silowuz.R
 
 @Composable
@@ -44,7 +43,7 @@ fun PlanDialog(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(White, RoundedCornerShape(15.dp))
+                .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(15.dp))
                 .padding(24.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
@@ -99,7 +98,7 @@ fun PlanDialog(
 
                         if (filteredExercises.isEmpty()) {
                             DropdownMenuItem(
-                                text = { Text(stringResource(R.string.no_more_exercises), color = Color.Gray) },
+                                text = { Text(stringResource(R.string.no_more_exercises), color = MaterialTheme.colorScheme.onSurfaceVariant) },
                                 onClick = { expanded = false }
                             )
                         } else {
@@ -108,7 +107,7 @@ fun PlanDialog(
                                     text = {
                                         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                                             Text(exercise.name, fontWeight = FontWeight.Medium)
-                                            Text("${exercise.reps}x${exercise.sets}", color = Color.Gray)
+                                            Text("${exercise.reps}x${exercise.sets}", color = MaterialTheme.colorScheme.onSurfaceVariant)
                                         }
                                     },
                                     onClick = {
@@ -134,19 +133,19 @@ fun PlanDialog(
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .background(Color(0xFFF5F5F5), RoundedCornerShape(10.dp))
+                                .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(10.dp))
                                 .padding(horizontal = 12.dp, vertical = 8.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Column(modifier = Modifier.weight(1f)) {
                                 Text(exercise.name, fontWeight = FontWeight.Bold, fontSize = 15.sp)
-                                Text("${exercise.reps} x ${exercise.sets}", fontSize = 12.sp, color = Color.Gray)
+                                Text("${exercise.reps} x ${exercise.sets}", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                             }
                             IconButton(onClick = { selectedIds.remove(id) }) {
                                 Icon(
                                     imageVector = Icons.Default.Delete,
                                     contentDescription = stringResource(R.string.delete),
-                                    tint = Color(0xFFE53935),
+                                    tint = MaterialTheme.colorScheme.error,
                                     modifier = Modifier.size(20.dp)
                                 )
                             }
@@ -164,9 +163,10 @@ fun PlanDialog(
                     modifier = Modifier.weight(1f),
                     shape = RoundedCornerShape(10.dp)
                 ) {
-                    Text(stringResource(R.string.cancel), color = Color.Gray)
+                    Text(stringResource(R.string.cancel), color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
                 Button(
+
                     onClick = { onSave(planName, selectedIds.toList()) },
                     modifier = Modifier.weight(1f),
                     enabled = planName.isNotBlank() && selectedIds.isNotEmpty(),
