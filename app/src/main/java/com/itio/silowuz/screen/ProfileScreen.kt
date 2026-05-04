@@ -30,6 +30,22 @@ import androidx.compose.ui.unit.dp
 import androidx.core.os.LocaleListCompat
 import com.itio.silowuz.R
 import androidx.core.net.toUri
+import android.Manifest
+import android.app.TimePickerDialog
+import android.content.pm.PackageManager
+import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.Switch
+import androidx.core.content.ContextCompat
+import com.itio.silowuz.data.TrainingReminderPrefs
+import com.itio.silowuz.services.TrainingReminderScheduler
+import androidx.compose.material3.Slider
+import kotlin.math.roundToInt
+
 
 @Composable
 fun ProfileScreen(paddingValues: PaddingValues, onLogout: () -> Unit){
@@ -37,6 +53,58 @@ fun ProfileScreen(paddingValues: PaddingValues, onLogout: () -> Unit){
     val isCurrentlyPolish = currentLocales.toLanguageTags().contains("pl")
     var isPolish by remember { mutableStateOf(isCurrentlyPolish) }
     val context = LocalContext.current
+
+    val reminderPrefs = remember { TrainingReminderPrefs(context) }
+
+    var reminderEnabled by remember { mutableStateOf(reminderPrefs.enabled) }
+    var reminderHour by remember { mutableStateOf(reminderPrefs.hour) }
+    var reminderMinute by remember { mutableStateOf(reminderPrefs.minute) }
+
+    val themePrefs = remember { com.itio.silowuz.data.ThemePrefs(context) }
+
+    var themeSliderPosition by remember {
+        mutableStateOf(
+            when (themePrefs.nightMode) {
+                AppCompatDelegate.MODE_NIGHT_NO -> 1f
+                AppCompatDelegate.MODE_NIGHT_YES -> 2f
+                else -> 0f // Systemowy
+            }
+        )
+    }
+
+    fun applyThemeFromSlider(value: Float) {
+        val step = value.roundToInt().coerceIn(0, 2)
+        themeSliderPosition = step.toFloat()
+
+        val mode = when (step) {
+            1 -> AppCompatDelegate.MODE_NIGHT_NO
+            2 -> AppCompatDelegate.MODE_NIGHT_YES
+            else -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
+        }
+
+        themePrefs.nightMode = mode
+        AppCompatDelegate.setDefaultNightMode(mode)
+    }
+
+
+    fun enableAndSchedule() {
+        reminderEnabled = true
+        reminderPrefs.enabled = true
+        TrainingReminderScheduler.schedule(context, reminderHour, reminderMinute)
+    }
+
+    val notificationPermissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { granted ->
+        if (granted) {
+            enableAndSchedule()
+        } else {
+            reminderEnabled = false
+            reminderPrefs.enabled = false
+            TrainingReminderScheduler.cancel(context)
+        }
+    }
+
 
     Column(modifier = Modifier
         .fillMaxSize()
@@ -60,6 +128,83 @@ fun ProfileScreen(paddingValues: PaddingValues, onLogout: () -> Unit){
                 modifier = Modifier.size(40.dp)
             )
         }
+        Text(
+            text = stringResource(R.string.theme_mode_label),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 8.dp)
+        )
+
+        Slider(
+            value = themeSliderPosition,
+            onValueChange = { applyThemeFromSlider(it) },
+            valueRange = 0f..2f,
+            steps = 1,
+            modifier = Modifier.padding(horizontal = 16.dp)
+        )
+
+        val themeLabel = when (themeSliderPosition.roundToInt()) {
+            1 -> stringResource(R.string.theme_light)
+            2 -> stringResource(R.string.theme_dark)
+            else -> stringResource(R.string.theme_system)
+        }
+        Text(text = themeLabel)
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 0.dp)
+                .padding(top = 20.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(stringResource(R.string.training_reminder_label))
+            Switch(
+                checked = reminderEnabled,
+                onCheckedChange = { checked ->
+                    if (checked) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+                            ContextCompat.checkSelfPermission(
+                                context,
+                                Manifest.permission.POST_NOTIFICATIONS
+                            ) != PackageManager.PERMISSION_GRANTED
+                        ) {
+                            notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                        } else {
+                            enableAndSchedule()
+                        }
+                    } else {
+                        reminderEnabled = false
+                        reminderPrefs.enabled = false
+                        TrainingReminderScheduler.cancel(context)
+                    }
+                }
+            )
+        }
+
+        Button(
+            onClick = {
+                TimePickerDialog(
+                    context,
+                    { _, hour, minute ->
+                        reminderHour = hour
+                        reminderMinute = minute
+                        reminderPrefs.hour = hour
+                        reminderPrefs.minute = minute
+
+                        if (reminderEnabled) {
+                            TrainingReminderScheduler.schedule(context, hour, minute)
+                        }
+                    },
+                    reminderHour,
+                    reminderMinute,
+                    true
+                ).show()
+            },
+            modifier = Modifier.padding(top = 8.dp)
+        ) {
+            Text(stringResource(R.string.training_reminder_time, reminderHour, reminderMinute))
+        }
         Spacer(modifier = Modifier.weight(1f))
         Text(text = stringResource(R.string.where_to_start))
         Text(text = stringResource(R.string.check_nearest_gym))
@@ -76,6 +221,8 @@ fun ProfileScreen(paddingValues: PaddingValues, onLogout: () -> Unit){
             )
         }
         Spacer(modifier = Modifier.weight(1f))
+
+
         Button(
             onClick = onLogout,
             modifier = Modifier.padding(bottom = 16.dp)

@@ -1,5 +1,8 @@
 package com.itio.silowuz.dataclass.exercise
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class Exercise(
     val id: String = "",
     val name: String = "",

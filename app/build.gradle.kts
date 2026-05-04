@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.google.gms.google.services)
+    kotlin("plugin.serialization") version "2.0.0"
 }
 
 android {
@@ -80,4 +81,5 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     implementation(libs.firebase.appcheck.playintegrity)
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
 }

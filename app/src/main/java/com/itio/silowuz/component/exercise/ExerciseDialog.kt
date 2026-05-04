@@ -35,8 +35,6 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.itio.silowuz.R
 import com.itio.silowuz.dataclass.exercise.Exercise
-import com.itio.silowuz.ui.theme.MainGreen
-import com.itio.silowuz.ui.theme.White
 
 @Composable
 fun ExerciseDialog(
@@ -50,6 +48,7 @@ fun ExerciseDialog(
     var defaultSets by remember { mutableStateOf(exercise?.sets?.toString() ?: "") }
     var defaultWeight by remember { mutableStateOf(exercise?.weight?.toString() ?: "") }
     var defaultDuration by remember { mutableStateOf(exercise?.duration?.toString() ?: "") }
+    val colors = MaterialTheme.colorScheme
 
     val dashedEffect = PathEffect.dashPathEffect(
         intervals = floatArrayOf(20f, 20f),
@@ -61,12 +60,12 @@ fun ExerciseDialog(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(
-                    color = White,
+                    color = colors.surface,
                     shape = RoundedCornerShape(15.dp)
                 )
                 .drawBehind {
                     drawRoundRect(
-                        color = MainGreen,
+                        color = colors.primary.copy(alpha = 0.7f),
                         style = Stroke(
                             width = 5.dp.toPx(),
                             pathEffect = dashedEffect

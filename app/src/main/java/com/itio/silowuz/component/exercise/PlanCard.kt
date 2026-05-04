@@ -35,7 +35,8 @@ fun PlanCard(
     allExercises: List<Exercise>,
     onStartTraining: () -> Unit,
     onEdit: () -> Unit,
-    onDelete: () -> Unit
+    onDelete: () -> Unit,
+    onExport: () -> Unit
 ) {
     val exercisesInPlan = trainingPlan.exerciseIds.mapNotNull { id ->
         allExercises.find { it.id == id }
@@ -97,7 +98,7 @@ fun PlanCard(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            ActionButton(text = "B", modifier = Modifier.weight(1f)) { /* TODO bluetooth */ }
+            ActionButton(text = "B", modifier = Modifier.weight(1f)) { onExport() }
             ActionButton(text = "E", modifier = Modifier.weight(1f)) { onEdit() }
             ActionButton(text = "U", modifier = Modifier.weight(1f)) { onDelete() }
         }
