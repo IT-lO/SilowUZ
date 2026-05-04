@@ -15,10 +15,11 @@
     <string name="home">Start</string>
     <string name="plans">Plany</string>
     <string name="profile">Konto</string>
-    <string name="exercise_name">Nazwa ćwiczenia</string>
-    <string name="exercise_reps">Powtórzenia</string>
-    <string name="exercise_sets">Serie</string>
-    <string name="exercise_weight">Ciężar</string>
+    <string name="exercise_name">Nazwa ćwiczenia*</string>
+    <string name="exercise_reps">Powtórzenia*</string>
+    <string name="exercise_sets">Serie*</string>
+    <string name="exercise_weight">Ciężar*</string>
+    <string name="new_exercise">Nowe ćwiczenie</string>
     <string name="exercise_duration">Czas</string>
     <string name="cancel">Anuluj</string>
     <string name="save">Zapisz</string>

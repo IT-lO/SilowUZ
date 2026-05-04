@@ -77,7 +77,7 @@ fun ExerciseDialog(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Text(
-                text = stringResource(R.string.exercise_name),
+                text = stringResource(R.string.new_exercise),
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface

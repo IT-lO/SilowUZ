@@ -1,5 +1,12 @@
 package com.itio.silowuz.screen
 
+import android.Manifest
+import android.bluetooth.BluetoothAdapter
+import android.content.pm.PackageManager
+import android.os.Build
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.fadeIn
@@ -57,6 +64,7 @@ import com.itio.silowuz.dataclass.exercise.Exercise
 import com.itio.silowuz.dataclass.exercise.TrainingPlan
 import com.itio.silowuz.`interface`.IconResource
 import com.itio.silowuz.ui.theme.MainGreen
+import com.itio.silowuz.ui.theme.White
 import com.itio.silowuz.viewmodel.PlansViewModel
 
 @Composable
@@ -72,6 +80,7 @@ fun PlansScreen(
     val sentError = stringResource(R.string.sent_error)
     val planImported = stringResource(R.string.plan_imported)
     val importError = stringResource(R.string.impoort_error)
+    var fillAllFieldsText = stringResource(R.string.fill_all_fields)
 
     var showExerciseDialog by remember { mutableStateOf(false) }
     var showPlanDialog by remember { mutableStateOf(false) }
@@ -176,10 +185,12 @@ fun PlansScreen(
                                        }
                                    }
                                 },
+                                containerColor = MainGreen,
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.ArrowBack,
-                                    contentDescription = stringResource(R.string.import_)
+                                    contentDescription = stringResource(R.string.import_),
+                                    tint = White
                                 )
                             }
                         }
@@ -194,7 +205,9 @@ fun PlansScreen(
                                     is IconResource.Drawable -> {
                                         Icon(
                                             painter = painterResource(id = addExerciseIcon.resId),
-                                            contentDescription = stringResource(R.string.create_exercise)
+                                            contentDescription = stringResource(R.string.create_exercise),
+                                            tint = White
+
                                         )
                                     }
                                     else -> { }
@@ -212,7 +225,8 @@ fun PlansScreen(
                                     is IconResource.Drawable -> {
                                         Icon(
                                             painter = painterResource(id = addSeriesIcon.resId),
-                                            contentDescription = stringResource(R.string.create_plan)
+                                            contentDescription = stringResource(R.string.create_plan),
+                                            tint = White
                                         )
                                     }
                                     else -> { }
@@ -227,7 +241,8 @@ fun PlansScreen(
                 ) {
                     Icon(Icons.Filled.Add,
                         contentDescription = stringResource(id = R.string.exercise_menu),
-                        modifier = Modifier.rotate(iconRotation)
+                        modifier = Modifier.rotate(iconRotation),
+                        tint = White
                     )
                 }
             }
@@ -318,9 +333,13 @@ fun PlansScreen(
                 exerciseToEdit = null
             },
             onSave = { name, reps, sets, weight, duration ->
-                viewModel.saveExercise(Exercise(exerciseToEdit?.id ?: "", name, reps, sets, weight, duration))
-                showExerciseDialog = false
-                exerciseToEdit = null
+                if (isExerciseValid(name, reps.toString(), sets.toString())) {
+                    viewModel.saveExercise(Exercise(exerciseToEdit?.id ?: "", name, reps, sets, weight, duration))
+                    showExerciseDialog = false
+                    exerciseToEdit = null
+                } else {
+                    Toast.makeText(context, fillAllFieldsText, Toast.LENGTH_SHORT).show()
+                }
             },
             paddingValues = paddingValues
         )
@@ -345,4 +364,11 @@ fun PlansScreen(
             }
         )
     }
+}
+
+// Funkcja sprawdzająca poprawność danych ćwiczenia
+fun isExerciseValid(name: String, reps: String, sets: String): Boolean {
+    return name.isNotBlank() &&
+            reps.toIntOrNull() != null &&
+            sets.toIntOrNull() != null
 }
