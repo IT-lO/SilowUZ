@@ -17,8 +17,8 @@ import androidx.core.content.ContextCompat
 import com.itio.silowuz.R
 import com.itio.silowuz.data.StepRepository
 
-/*
-    Foreground service used to count user's steps based on the step counter sensor.
+/**
+ * Foreground service used to count user's steps based on the step counter sensor.
  */
 class PedometerService : Service(), SensorEventListener {
     private lateinit var sensorManager: SensorManager
@@ -40,15 +40,16 @@ class PedometerService : Service(), SensorEventListener {
         }
     }
 
-    /*
-        Checks if the app has permission to use the step counter sensor.
+    /**
+     * Checks if the app has permission to use the step counter sensor.
+     * @return Boolean indicating if the permission is granted
      */
     private fun hasPermission(): Boolean {
         return ContextCompat.checkSelfPermission(this, Manifest.permission.ACTIVITY_RECOGNITION) == PackageManager.PERMISSION_GRANTED
     }
 
-    /*
-        Registers the listener for step counter sensor.
+    /**
+     * Registers the listener for step counter sensor.
      */
     private fun startTracking() {
         if (stepCounterSensor != null){
@@ -58,10 +59,11 @@ class PedometerService : Service(), SensorEventListener {
 
     override fun onAccuracyChanged(p0: Sensor?, p1: Int) {}
 
-    /*
-        When step sensor gets updated it sends the value to the repository and creates
-        a notification for amount of steps taken. Foreground services are required to display notification
-        to inform user about running service.
+    /**
+     * When step sensor gets updated it sends the value to the repository and creates
+     * a notification for amount of steps taken. Foreground services are required to display notification
+     * to inform user about running service.
+     * @param event SensorEvent containing the updated value
      */
     override fun onSensorChanged(event: SensorEvent?) {
         if (event?.sensor?.type == Sensor.TYPE_STEP_COUNTER) {
@@ -84,8 +86,10 @@ class PedometerService : Service(), SensorEventListener {
         sensorManager.unregisterListener(this)
     }
 
-    /*
-        Creates notification with current amount of steps taken.
+    /**
+     * Creates notification with current amount of steps taken.
+     * @param steps Current amount of steps taken
+     * @return Notification object
      */
     private fun createNotification(steps: Int): Notification {
         return NotificationCompat.Builder(this, CHANNEL_ID)
@@ -96,8 +100,8 @@ class PedometerService : Service(), SensorEventListener {
             .build()
     }
 
-    /*
-        Prepares the channel to show the notification.
+    /**
+     * Prepares the channel to show the notification.
      */
     private fun createNotificationChannel() {
         val channel = NotificationChannel(

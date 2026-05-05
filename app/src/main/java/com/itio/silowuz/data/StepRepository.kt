@@ -12,9 +12,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 
-/*
-    Repository used by PedometerService to update steps taken by the user when tracking is enabled.
-    Uses SharedPreferences to store data and singleton pattern to ensure only one instance of the repository.
+/**
+ * Repository used by PedometerService to update steps taken by the user when tracking is enabled.
+ * Uses SharedPreferences to store data and singleton pattern to ensure only one instance of the repository.
+ * @param context Context of the application
+ * @param pedometerFirebaseRepository Repository used to save data to Firebase
  */
 class StepRepository private constructor(context: Context, private val pedometerFirebaseRepository: PedometerFirebaseRepository) {
     private val prefs: SharedPreferences = context.getSharedPreferences("pedometer_prefs", Context.MODE_PRIVATE)
@@ -32,10 +34,12 @@ class StepRepository private constructor(context: Context, private val pedometer
             prefs.edit { putBoolean("is_tracking", value) }
         }
 
-    /*
-        Method checks if tracking is enabled or a direct call was made to reset the last value of steps.
-        During the change of day it resets the value of today's steps to 0.
-        Calculates steps based on current and last sensor value and adds them to today's total.
+    /**
+     * Method checks if tracking is enabled or a direct call was made to reset the last value of steps.
+     * During the change of day it resets the value of today's steps to 0.
+     * Calculates steps based on current and last sensor value and adds them to today's total.
+     * @param context Context of the application
+     * @param totalStepsSinceReboot Current value of the step sensor
      */
     fun updateSteps(context: Context, totalStepsSinceReboot: Int) {
         // Prevents counting steps when user pressed Stop Tracking button on HomeScreen.
