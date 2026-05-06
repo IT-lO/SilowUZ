@@ -3,6 +3,12 @@ package com.itio.silowuz.data
 import android.content.Context
 import androidx.core.content.edit
 
+/**
+ * Preference wrapper for training reminder settings.
+ * Stores reminder state and scheduled time in SharedPreferences.
+ *
+ * Backed by: `training_reminder_prefs`.
+ */
 class TrainingReminderPrefs(context: Context) {
     private val prefs = context.getSharedPreferences("training_reminder_prefs", Context.MODE_PRIVATE)
 
