@@ -37,6 +37,9 @@ import com.itio.silowuz.ui.theme.SecondaryGreen
 import com.itio.silowuz.ui.theme.SubTextGray
 import java.util.prefs.Preferences
 
+/**
+ * Class containing the logic for the widget with the current amount of steps taken.
+ */
 class AppWidget() : GlanceAppWidget() {
     override suspend fun provideGlance(
         context: Context,
@@ -51,6 +54,11 @@ class AppWidget() : GlanceAppWidget() {
         }
     }
 
+    /**
+     * Creates the content of the widget
+     * @param todaysStepsLabel String containing the label for the widget according to currently used language
+     * @param context Context of the application
+     */
     @Composable
     private fun MyContent(todaysStepsLabel: String, context: Context) {
         val stepRepository = remember { StepRepository.getInstance(context) }
@@ -118,6 +126,10 @@ class AppWidget() : GlanceAppWidget() {
         }
     }
 
+    /**
+     * Updates the widget with the current amount of steps taken.
+     * @param context Context of the application
+     */
     suspend fun updateStepWidget(context: Context) {
         AppWidget().updateAll(context)
     }

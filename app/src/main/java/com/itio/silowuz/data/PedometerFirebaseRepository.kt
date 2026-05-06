@@ -10,8 +10,8 @@ import com.itio.silowuz.dataclass.home.DailySteps
 import java.time.LocalDate
 import java.time.temporal.ChronoField
 
-/*
-    Repository used to save daily steps to Firebase and retrieve weekly steps.
+/**
+ * Repository used to save daily steps to Firebase and retrieve weekly steps.
  */
 class PedometerFirebaseRepository {
     private val db = Firebase.firestore
@@ -24,8 +24,8 @@ class PedometerFirebaseRepository {
         fetchWeeklySteps()
     }
 
-    /*
-        Fetches the steps from the current week of the logged-in user.
+    /**
+     * Fetches the steps from the current week of the logged-in user.
      */
     private fun fetchWeeklySteps() {
         if (userId.isEmpty()) return
@@ -43,8 +43,10 @@ class PedometerFirebaseRepository {
             }
     }
 
-    /*
-        Saves the daily steps to Firebase.
+    /**
+     * Saves the daily steps to Firebase.
+     * @param stepCount The number of steps taken today
+     * @param day The date of the day
      */
     fun saveDailySteps(stepCount: Int, day: String) {
         if (userId.isEmpty()) return

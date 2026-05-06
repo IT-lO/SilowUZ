@@ -49,7 +49,13 @@ import com.itio.silowuz.ui.theme.SecondaryGreen
 import com.itio.silowuz.ui.theme.White
 import com.itio.silowuz.viewmodel.HomeViewModel
 
-
+/**
+ * Composable screen for home page
+ * Displays greeting with current date, pedometer, burned calories and distance covered
+ * and weekly step progress chart.
+ * @param paddingValues The padding values to apply to the content
+ * @param homeViewModel The view model for the home screen
+ */
 @Composable
 fun HomeScreen(paddingValues: PaddingValues,
                homeViewModel: HomeViewModel = viewModel()){
